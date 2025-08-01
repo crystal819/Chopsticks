@@ -1,11 +1,25 @@
 current_player = "Player1"
 p1l = 1
-p1r = 1
+p1r = 4
 p2l = 1
-p2r = 1
+p2r = 4
+
+
+def confirm_no_over_5(p1l, p1r, p2l, p2r):
+    if p1l >= 5:
+        p1l -= 5
+    if p1r >= 5:
+        p1r -= 5
+    if p2l >= 5:
+        p2l -= 5
+    if p2r >= 5:
+        p2r -= 5
+    return p1l, p1r, p2l, p2r
+
 
 while (p1l+p1r != 0) and (p2l+p2r !=0):
-    print(p1l,":",p1r,"|", p2l,":",p2r)
+    p1l, p1r, p2l, p2r = confirm_no_over_5(p1l, p1r, p2l, p2r)
+    print(" "*50,p1l,":",p1r,"|", p2l,":",p2r)
     if current_player == "Player1":
         print("Player 1:")
         choice_1 = int(input("Do you want to attack (1) or split (2)?"))
@@ -83,7 +97,8 @@ while (p1l+p1r != 0) and (p2l+p2r !=0):
                 p1r -= add
         current_player = "Player2"
 
-    print(p1l,":",p1r,"|", p2l,":",p2r)
+    p1l, p1r, p2l, p2r = confirm_no_over_5(p1l, p1r, p2l, p2r)
+    print(" "*50,p1l,":",p1r,"|", p2l,":",p2r)
     if (p1l+p1r == 0) or (p2l+p2r ==0):
         break
 
