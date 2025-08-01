@@ -1,8 +1,8 @@
 current_player = "Player1"
-p1l = 1
-p1r = 4
+p1l = 0
+p1r = 1
 p2l = 1
-p2r = 4
+p2r = 0
 
 
 def confirm_no_over_5(p1l, p1r, p2l, p2r):
@@ -25,6 +25,18 @@ while (p1l+p1r != 0) and (p2l+p2r !=0):
         choice_1 = int(input("Do you want to attack (1) or split (2)?"))
         if choice_1 == 1: #attacking
             choice_2 = int(input("Do you want to attack with: \nl-> l (1) \nl->r (2) \nr-> l (3) \nr-> r (4)\n"))
+            while p2l == 0:
+                if choice_2 == 1 or choice_2 == 3:
+                    print("You cannot attack this hand as they have 0 fingers held up, try again")
+                    choice_2 = int(input("Do you want to attack with: \nl-> l (1) \nl->r (2) \nr-> l (3) \nr-> r (4)\n"))
+                else: 
+                    break
+            while p2r == 0:
+                if choice_2 == 2 or choice_2 == 4:
+                    print("You cannot attack this hand as they have 0 fingers held up, try again")
+                    choice_2 = int(input("Do you want to attack with: \nl-> l (1) \nl->r (2) \nr-> l (3) \nr-> r (4)\n"))
+                else: 
+                    break
             if choice_2 == 1:
                 p2l += p1l
                 if p2l >= 5:
@@ -107,6 +119,18 @@ while (p1l+p1r != 0) and (p2l+p2r !=0):
         choice_1 = int(input("Do you want to attack (1) or split (2)?"))
         if choice_1 == 1: #attacking
             choice_2 = int(input("Do you want to attack with: \nl-> l (1) \nl->r (2) \nr-> l (3) \nr-> r (4)\n"))
+            while p1l == 0:
+                if choice_2 == 1 or choice_2 == 3:
+                    print("You cannot attack this hand as they have 0 fingers held up, try again")
+                    choice_2 = int(input("Do you want to attack with: \nl-> l (1) \nl->r (2) \nr-> l (3) \nr-> r (4)\n"))
+                else: 
+                    break
+            while p1r == 0:
+                if choice_2 == 2 or choice_2 == 4:
+                    print("You cannot attack this hand as they have 0 fingers held up, try again")
+                    choice_2 = int(input("Do you want to attack with: \nl-> l (1) \nl->r (2) \nr-> l (3) \nr-> r (4)\n"))
+                else: 
+                    break
             if choice_2 == 1:
                 p1l += p2l
                 if p1l >= 5:
