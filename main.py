@@ -16,6 +16,21 @@ def confirm_no_over_5(p1l, p1r, p2l, p2r):
         p2r -= 5
     return p1l, p1r, p2l, p2r
 
+def no_attacking_with_0(p1l, p1r, p2l, p2r, choice_2):
+    while p2l == 0:
+        if choice_2 == 1 or choice_2 == 2:
+            print("You cannot attack with this hand as you have 0 fingers held up, try again")
+            choice_2 = int(input("Do you want to attack with: \nl-> l (1) \nl->r (2) \nr-> l (3) \nr-> r (4)\n"))
+        else: 
+            break
+    while p2r == 0:
+        if choice_2 == 3 or choice_2 == 4:
+            print("You cannot attack with this hand as you have 0 fingers held up, try again")
+            choice_2 = int(input("Do you want to attack with: \nl-> l (1) \nl->r (2) \nr-> l (3) \nr-> r (4)\n"))
+        else: 
+            break
+
+
 
 while (p1l+p1r != 0) and (p2l+p2r !=0):
     p1l, p1r, p2l, p2r = confirm_no_over_5(p1l, p1r, p2l, p2r)
@@ -34,6 +49,18 @@ while (p1l+p1r != 0) and (p2l+p2r !=0):
             while p2r == 0:
                 if choice_2 == 2 or choice_2 == 4:
                     print("You cannot attack this hand as they have 0 fingers held up, try again")
+                    choice_2 = int(input("Do you want to attack with: \nl-> l (1) \nl->r (2) \nr-> l (3) \nr-> r (4)\n"))
+                else: 
+                    break
+            while p1l == 0:
+                if choice_2 == 1 or choice_2 == 2:
+                    print("You cannot attack with this hand as you have 0 fingers held up, try again")
+                    choice_2 = int(input("Do you want to attack with: \nl-> l (1) \nl->r (2) \nr-> l (3) \nr-> r (4)\n"))
+                else: 
+                    break
+            while p1r == 0:
+                if choice_2 == 3 or choice_2 == 4:
+                    print("You cannot attack with this hand as you have 0 fingers held up, try again")
                     choice_2 = int(input("Do you want to attack with: \nl-> l (1) \nl->r (2) \nr-> l (3) \nr-> r (4)\n"))
                 else: 
                     break
@@ -128,6 +155,18 @@ while (p1l+p1r != 0) and (p2l+p2r !=0):
             while p1r == 0:
                 if choice_2 == 2 or choice_2 == 4:
                     print("You cannot attack this hand as they have 0 fingers held up, try again")
+                    choice_2 = int(input("Do you want to attack with: \nl-> l (1) \nl->r (2) \nr-> l (3) \nr-> r (4)\n"))
+                else: 
+                    break
+            while p2l == 0:
+                if choice_2 == 1 or choice_2 == 2:
+                    print("You cannot attack with this hand as you have 0 fingers held up, try again")
+                    choice_2 = int(input("Do you want to attack with: \nl-> l (1) \nl->r (2) \nr-> l (3) \nr-> r (4)\n"))
+                else: 
+                    break
+            while p2r == 0:
+                if choice_2 == 3 or choice_2 == 4:
+                    print("You cannot attack with this hand as you have 0 fingers held up, try again")
                     choice_2 = int(input("Do you want to attack with: \nl-> l (1) \nl->r (2) \nr-> l (3) \nr-> r (4)\n"))
                 else: 
                     break
