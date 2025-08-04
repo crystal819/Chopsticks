@@ -1,9 +1,8 @@
 current_player = "Player1"
-p1l = 0
+p1l = 1
 p1r = 1
 p2l = 1
-p2r = 0
-
+p2r = 1
 
 def confirm_no_over_5(p1l, p1r, p2l, p2r):
     if p1l >= 5:
@@ -16,22 +15,7 @@ def confirm_no_over_5(p1l, p1r, p2l, p2r):
         p2r -= 5
     return p1l, p1r, p2l, p2r
 
-def no_attacking_with_0(p1l, p1r, p2l, p2r, choice_2):
-    while p2l == 0:
-        if choice_2 == 1 or choice_2 == 2:
-            print("You cannot attack with this hand as you have 0 fingers held up, try again")
-            choice_2 = int(input("Do you want to attack with: \nl-> l (1) \nl->r (2) \nr-> l (3) \nr-> r (4)\n"))
-        else: 
-            break
-    while p2r == 0:
-        if choice_2 == 3 or choice_2 == 4:
-            print("You cannot attack with this hand as you have 0 fingers held up, try again")
-            choice_2 = int(input("Do you want to attack with: \nl-> l (1) \nl->r (2) \nr-> l (3) \nr-> r (4)\n"))
-        else: 
-            break
-
-
-
+prepare_JSON_files()
 while (p1l+p1r != 0) and (p2l+p2r !=0):
     p1l, p1r, p2l, p2r = confirm_no_over_5(p1l, p1r, p2l, p2r)
     print(" "*50,p1l,":",p1r,"|", p2l,":",p2r)
@@ -231,7 +215,6 @@ while (p1l+p1r != 0) and (p2l+p2r !=0):
                 while p2l == p2r: #preventing switching same hands over
                     print("You cannot switch the fingers around, try again")
                     p2l = p2l - add
-                    print("p2l=", p2l)
                     add = int(input("How much do you want to split to your right hand?"))
                     while add > p2r:
                         print("You cannot perform this split as your hand doesnt have enough fingers up currently, try again")
