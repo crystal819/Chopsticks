@@ -3,10 +3,14 @@ import random
 import os
 
 current_player = "Player1"
-p1l = 0
-p1r = 4
-p2l = 0
-p2r = 1
+p1l = 2
+p1r = 2
+p2l = 2
+p2r = 0
+
+file_name = "q_learning_values_for_bot.json"
+script_directory = os.path.dirname(os.path.abspath(__file__))
+data_json = os.path.join(script_directory, file_name)
 
 def prepare_JSON_files(file_name="q_learning_values_for_bot.json"):
 
@@ -42,64 +46,100 @@ def confirm_no_over_5(p1l, p1r, p2l, p2r):
         p2r -= 5
     return p1l, p1r, p2l, p2r
 
-def calculate_how_many_splitting_moves_are_legal(p1l, p1r, left_hand, right_hand):
-    print("Entered the function")
-    file_name = "q_learning_values_for_bot.json"
-    script_directory = os.path.dirname(os.path.abspath(__file__))
-    data_json = os.path.join(script_directory, file_name)
-    if left_hand != 0:
-        right_hand_orginal = right_hand
-        with open(data_json, "r") as f: #creating new key key value trios or key value pairs if needed
+def all_legal_moves(p1l, p1r, p2l, p2r, data_json):
+    def calculate_how_many_splitting_moves_are_legal(p1l, p1r, left_hand, right_hand, data_json):
+        print("Entered the function")
+        if left_hand != 0:
+            right_hand_orginal = right_hand
+            with open(data_json, "r") as f: #creating new key key value trios or key value pairs if needed
+                data_py = json.load(f)
+                print("opened file")
+            for i in range(1,left_hand+1):
+                right_hand += 1
+                print(f"right hand is {right_hand}")
+                if left_hand != right_hand:
+                    print(f"{left_hand}{right_hand}")
+                    try:
+                        game_state = f"{p1l}{p1r}{left_hand}{right_hand_orginal}"
+                        if game_state not in data_py:
+                            data_py[game_state] = {}
+                        move_choice = f"{left_hand}{right_hand_orginal} {i}"
+                        if move_choice not in data_py[game_state]:
+                            data_py[game_state][move_choice] = {}
+                            print("Adding new key-value")
+                        with open(data_json, "w") as f: #writing it to the json file
+                            json.dump(data_py, f, indent=4)
+                            print("Successfuly uploaded data_py")
+                    except json.JSONDecodeError as e:
+                        print("Error decoding json:", e)
+                    except KeyError as e:
+                        print("Error: key not found during access:", e)
+                    except Exception as e:
+                        print(f"An error {e} occured")
+            right_hand = right_hand_orginal
+        if right_hand != 0:
+            left_hand_original = left_hand
+            with open(data_json, "r") as f: #creating new key key value trios or key value pairs if needed
+                data_py = json.load(f)
+                print("opened file")
+            for i in range(1,right_hand+1):
+                left_hand += 1
+                if left_hand != right_hand:
+                    try:
+                        game_state = f"{p1l}{p1r}{left_hand_original}{right_hand}"
+                        if game_state not in data_py:
+                            data_py[game_state] = {}
+                        move_choice = f"{left_hand_original}{right_hand} {i}"
+                        if move_choice not in data_py[game_state]:
+                            data_py[game_state][move_choice] = {}
+                            print("Adding new key-value")
+                        with open(data_json, "w") as f: #writing it to the json file
+                            json.dump(data_py, f, indent=4)
+                            print("Successfuly uploaded data_py")
+                    except json.JSONDecodeError as e:
+                        print("Error decoding json:", e)
+                    except KeyError as e:
+                        print("Error: key not found during access:", e)
+                    except Exception as e:
+                        print(f"An error {e} occured")
+            left_hand = left_hand_original
+    def legal_attacking_moves(p1l, p1r, p2l, p2r, data_json):
+        print("Entered attacking function")
+        with open(data_json, "r") as f:
             data_py = json.load(f)
-            print("opened file")
-        for i in range(1,left_hand+1):
-            right_hand += 1
-            if left_hand != right_hand:
-                try:
-                    game_state = f"{p1l}{p1r}{left_hand}{right_hand_orginal}"
-                    if game_state not in data_py:
-                        data_py[game_state] = {}
-                    move_choice = f"{left_hand}{right_hand_orginal} {i}"
-                    if move_choice not in data_py[game_state]:
-                        data_py[game_state][move_choice] = {}
-                        print("Adding new key-value")
-                    with open(data_json, "w") as f: #writing it to the json file
-                        json.dump(data_py, f, indent=4)
-                        print("Successfuly uploaded data_py")
-                except json.JSONDecodeError as e:
-                    print("Error decoding json:", e)
-                except KeyError as e:
-                    print("Error: key not found during access:", e)
-                except Exception as e:
-                    print(f"An error {e} occured")
-    if right_hand != 0:
-        left_hand_original = left_hand
-        with open(data_json, "r") as f: #creating new key key value trios or key value pairs if needed
-            data_py = json.load(f)
-            print("opened file")
-        for i in range(1,right_hand+1):
-            left_hand += 1
-            if left_hand != right_hand:
-                try:
-                    game_state = f"{p1l}{p1r}{left_hand_original}{right_hand}"
-                    if game_state not in data_py:
-                        data_py[game_state] = {}
-                    move_choice = f"{left_hand_original}{right_hand} {i}"
-                    if move_choice not in data_py[game_state]:
-                        data_py[game_state][move_choice] = {}
-                        print("Adding new key-value")
-                    with open(data_json, "w") as f: #writing it to the json file
-                        json.dump(data_py, f, indent=4)
-                        print("Successfuly uploaded data_py")
-                except json.JSONDecodeError as e:
-                    print("Error decoding json:", e)
-                except KeyError as e:
-                    print("Error: key not found during access:", e)
-                except Exception as e:
-                    print(f"An error {e} occured")
+        game_state = f"{p1l}{p1r}{p2l}{p2r}"
+        hand = [p1l,p1r,p2l,p2r]
+        for i in range(0,2):
+            print("entered the loop")
+            print(hand[i])
+            if hand[i] != 0:
+                print(f"hand {hand[i]} is not 0")
+                for j in range(0,2):
+                    if hand[j+2] != 0:
+                        print(f"hand {hand[i]} and hand {hand[j+2]} are not 0")
+                        move_choice = f"{p2l}{p2r}a{hand[i]}w{hand[j+2]}"
+                        try:
+                            if game_state not in data_py:
+                                data_py[game_state] = {}
+                            if move_choice not in data_py[game_state]:
+                                data_py[game_state][move_choice] = {}
+                            with open(data_json, "w") as f:
+                                json.dump(data_py, f, indent = 4)
+                                print("Successfully added new attacking key value pair")
+                        except json.JSONDecodeError as e:
+                            print("Error decoding json:", e)
+                        except KeyError as e:
+                            print("Error: key not found during access:", e)
+                        except Exception as e:
+                            print(f"An error {e} occured")
+    
+    calculate_how_many_splitting_moves_are_legal(p1l, p1r, p2l, p2r, data_json)
+    print(p1l, p1r, p2l, p2r, "current hands inbetween split and attack functions")
+    legal_attacking_moves(p1l, p1r, p2l, p2r, data_json)
+
 
 while (p1l+p1r != 0) and (p2l+p2r !=0):
-    calculate_how_many_splitting_moves_are_legal(p1l, p1r, p2l, p2r)
+    all_legal_moves(p1l, p1r, p2l, p2r, data_json)
     p1l, p1r, p2l, p2r = confirm_no_over_5(p1l, p1r, p2l, p2r)
     print(" "*50,p1l,":",p1r,"|", p2l,":",p2r)
     if current_player == "Player1":
@@ -202,7 +242,7 @@ while (p1l+p1r != 0) and (p2l+p2r !=0):
                         p1l -= 5
                 p1r -= add
         current_player = "Player2"
-    calculate_how_many_splitting_moves_are_legal(p1l, p1r, p2l, p2r)
+    all_legal_moves(p1l, p1r, p2l, p2r, data_json)
     p1l, p1r, p2l, p2r = confirm_no_over_5(p1l, p1r, p2l, p2r)
     print(" "*50,p1l,":",p1r,"|", p2l,":",p2r)
     if (p1l+p1r == 0) or (p2l+p2r ==0):
@@ -312,5 +352,3 @@ if p1l+p1r == 0:
     print("Game over! Player 2 wins!")
 else:
     print("Game over! Player 1 wins!")
-
-q_vales = "q_learning_values_for_bot.json"
