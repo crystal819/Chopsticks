@@ -356,15 +356,16 @@ else:
 
 def bot(p1l, p1r, p2l, p2r, epsilon=90):
     random_int = random.randint(1,100)
+    with open(data_json, "r") as f:
+        data_py = json.load(f)
+    game_state = f"{p1l}{p1r}{p2l}{p2r}"
+    game_state_dictionary = data_py[game_state]
+    keys_for_game_state = game_state_dictionary.keys()
+    list_of_keys_for_moves = list(keys_for_game_state)
+    print("printing data_py[game_state] and [0]", data_py[game_state][list_of_keys_for_moves[0]])
     if random_int <= epsilon: #exploration
-        with open(data_json, "r") as f:
-            data_py = json.load(f)
-        game_state = f"{p1l}{p1r}{p2l}{p2r}"
-        game_state_dictionary = data_py[game_state]
         total_legal_moves = len(game_state_dictionary)
         bot_choice = random.randint(0,total_legal_moves-1)
-        keys_for_game_state = game_state_dictionary.keys()
-        list_of_keys_for_moves = list(keys_for_game_state)
         bot_move = list_of_keys_for_moves[bot_choice]
         p2l_original = p2l
         p2r_original = p2r
@@ -378,7 +379,7 @@ def bot(p1l, p1r, p2l, p2r, epsilon=90):
                 p1l, p1r, p2l, p2r = confirm_no_over_5(p1l, p1r, p2l, p2r)
         elif bot_move[2] == "s": #if the random move chosen is splitting
             print("The chosen random move is splitting")
-            if bot_move[0] == 0:
+            if int(bot_move[0]) == 0:
                 p2l += int(bot_move[3])
                 p2r -= int(bot_move[3])
                 p1l, p1r, p2l, p2r = confirm_no_over_5(p1l, p1r, p2l, p2r)
@@ -395,6 +396,44 @@ def bot(p1l, p1r, p2l, p2r, epsilon=90):
                     p2r = p2r_original + int(bot_move[3])
                     p1l, p1r, p2l, p2r = confirm_no_over_5(p1l, p1r, p2l, p2r)
     elif random_int > epsilon: #exploitation
-        print("exploration")
+        print("exploitation")
+        best_move = ""
+        best_move_score = -999999
+        for i in range(0,len(list_of_keys_for_moves)):
+            current_testing_move = data_py[game_state][list_of_keys_for_moves[i]]
+            if current_testing_move > best_move_score:
+                best_move_score = current_testing_move
+                best_move = list_of_keys_for_moves[i]
+        bot_move = best_move
+        p2l_original = p2l
+        p2r_original = p2r
+        if bot_move[2] == "a": #if the move selected is attacking
+            print("The move chosen is attacking")
+            if p1l == int(bot_move[3]):
+                p1l += int(bot_move[5])
+                p1l, p1r, p2l, p2r = confirm_no_over_5(p1l, p1r, p2l, p2r)
+            elif p1r == int(bot_move[3]):
+                p1r += int(bot_move[5])
+                p1l, p1r, p2l, p2r = confirm_no_over_5(p1l, p1r, p2l, p2r)
+        elif bot_move[2] == "s": #if the move chosen is splitting
+            print("The move chosen is splitting")
+            if int(bot_move[0]) == 0:
+                p2l += int(bot_move[3])
+                p2r -= int(bot_move[3])
+                p1l, p1r, p2l, p2r = confirm_no_over_5(p1l, p1r, p2l, p2r)
+                if p2l_original == p2r:
+                    p2l = p2l_original - int(bot_move[3])
+                    p2r = p2r_original + int(bot_move[3])
+                    p1l, p1r, p2l, p2r = confirm_no_over_5(p1l, p1r, p2l, p2r)
+            else:
+                p2l -= int(bot_move[3])
+                p2r += int(bot_move[3])
+                p1l, p1r, p2l, p2r = confirm_no_over_5(p1l, p1r, p2l, p2r)
+                if p2l_original == p2r:
+                    p2l = p2l_original + int(bot_move[3])
+                    p2r = p2r_original - int(bot_move[3])
+                    p1l, p1r, p2l, p2r = confirm_no_over_5(p1l, p1r, p2l, p2r)
     print("Reached end of the function")
     return p1l, p1r, p2l, p2r
+
+
