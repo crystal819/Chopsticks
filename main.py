@@ -6,7 +6,7 @@ current_player = "Player1"
 p1l = 2
 p1r = 2
 p2l = 2
-p2r = 0
+p2r = 1
 
 file_name = "q_learning_values_for_bot.json"
 script_directory = os.path.dirname(os.path.abspath(__file__))
@@ -63,7 +63,7 @@ def all_legal_moves(p1l, p1r, p2l, p2r, data_json):
                         game_state = f"{p1l}{p1r}{left_hand}{right_hand_orginal}"
                         if game_state not in data_py:
                             data_py[game_state] = {}
-                        move_choice = f"{left_hand}{right_hand_orginal} {i}"
+                        move_choice = f"{left_hand}{right_hand_orginal}s{i}"
                         if move_choice not in data_py[game_state]:
                             data_py[game_state][move_choice] = {}
                             print("Adding new key-value")
@@ -89,7 +89,7 @@ def all_legal_moves(p1l, p1r, p2l, p2r, data_json):
                         game_state = f"{p1l}{p1r}{left_hand_original}{right_hand}"
                         if game_state not in data_py:
                             data_py[game_state] = {}
-                        move_choice = f"{left_hand_original}{right_hand} {i}"
+                        move_choice = f"{left_hand_original}{right_hand}s{i}"
                         if move_choice not in data_py[game_state]:
                             data_py[game_state][move_choice] = {}
                             print("Adding new key-value")
@@ -352,3 +352,49 @@ if p1l+p1r == 0:
     print("Game over! Player 2 wins!")
 else:
     print("Game over! Player 1 wins!")
+
+
+def bot(p1l, p1r, p2l, p2r, epsilon=90):
+    random_int = random.randint(1,100)
+    if random_int <= epsilon: #exploration
+        with open(data_json, "r") as f:
+            data_py = json.load(f)
+        game_state = f"{p1l}{p1r}{p2l}{p2r}"
+        game_state_dictionary = data_py[game_state]
+        total_legal_moves = len(game_state_dictionary)
+        bot_choice = random.randint(0,total_legal_moves-1)
+        keys_for_game_state = game_state_dictionary.keys()
+        list_of_keys_for_moves = list(keys_for_game_state)
+        bot_move = list_of_keys_for_moves[bot_choice]
+        p2l_original = p2l
+        p2r_original = p2r
+        if bot_move[2] == "a": #if the random move selected is attacking
+            print("The random move chosen is attacking")
+            if p1l == int(bot_move[3]):
+                p1l += int(bot_move[5])
+                p1l, p1r, p2l, p2r = confirm_no_over_5(p1l, p1r, p2l, p2r)
+            elif p1r == int(bot_move[3]):
+                p1r += int(bot_move[5])
+                p1l, p1r, p2l, p2r = confirm_no_over_5(p1l, p1r, p2l, p2r)
+        elif bot_move[2] == "s": #if the random move chosen is splitting
+            print("The chosen random move is splitting")
+            if bot_move[0] == 0:
+                p2l += int(bot_move[3])
+                p2r -= int(bot_move[3])
+                p1l, p1r, p2l, p2r = confirm_no_over_5(p1l, p1r, p2l, p2r)
+                if p2l_original == p2r:
+                    p2l = p2l_original - int(bot_move[3])
+                    p2r = p2r_original + int(bot_move[3])
+                    p1l, p1r, p2l, p2r = confirm_no_over_5(p1l, p1r, p2l, p2r)
+            else:
+                p2l -= int(bot_move[3])
+                p2r += int(bot_move[3])
+                p1l, p1r, p2l, p2r = confirm_no_over_5(p1l, p1r, p2l, p2r)
+                if p2l_original == p2r:
+                    p2l = p2l_original - int(bot_move[3])
+                    p2r = p2r_original + int(bot_move[3])
+                    p1l, p1r, p2l, p2r = confirm_no_over_5(p1l, p1r, p2l, p2r)
+    elif random_int > epsilon: #exploitation
+        print("exploration")
+    print("Reached end of the function")
+    return p1l, p1r, p2l, p2r
