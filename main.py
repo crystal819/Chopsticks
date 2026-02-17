@@ -23,7 +23,7 @@ class Player:
             return False
         else:
             splitter_hand.set_value(splitter_hand.get_value() - amount) 
-            recipient_hand.set_value(recipient_hand.get_value() + amount)
+            recipient_hand.set_value((recipient_hand.get_value() + amount)%5)
             return True
 
 class Hand:

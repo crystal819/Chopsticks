@@ -55,13 +55,13 @@ class Agent(Player):
         highest_action = None
         legal_moves = self.get_valid_moves(state)
 
-        if state not in q_values: #adds state if not present
-            q_values[state] = {}
+        if str(state) not in q_values: #adds state if not present
+            q_values[str(state)] = {}
         for action in legal_moves:
-            if action not in q_values[state]: #adds action if not present
-                q_values[state][action] = 0
-            if q_values[state][action] > highest:
-                highest = q_values[state][action]
+            if str(action) not in q_values[str(state)]: #adds action if not present
+                q_values[str(state)][str(action)] = 0
+            if q_values[str(state)][str(action)] > highest:
+                highest = q_values[str(state)][str(action)]
                 highest_action = action
         return [highest, highest_action]
                 
@@ -89,7 +89,7 @@ class Agent(Player):
             for i in range(1, self.right.get_value()+1):
                 temp = self.left.get_value() + i
                 if temp != self.right.get_value():
-                    valid_moves.append(('s', 0, i)) 
+                    valid_moves.append(('s', 1, i)) 
 
         return valid_moves #returns the valid moves in a list
 
@@ -97,7 +97,7 @@ class Agent(Player):
         alpha = 0.1 #learning rate
         gamma = 0.9 #discount factor - how much future rewards matter compared to immediate rewards
 
-        q_values[state][action] = q_values[state][action] + alpha*(reward + gamma*self.max_Q(state, q_values)[0] - q_values[state][action])
+        q_values[str(state)][str(action)] = q_values[str(state)][str(action)] + alpha*(reward + gamma*self.max_Q(state, q_values)[0] - q_values[str(state)][str(action)])
 
  
 
@@ -107,15 +107,23 @@ def load_q_values():
         q_values = json.loads(file.read())
     return q_values
 
-
-
-
+def save_q_values(q_values):
+    try:
+        with open('q_learning_values_for_bot.json', 'w', encoding='utf-8') as file:
+            json.dump(q_values, file, indent=4, ensure_ascii=False)
+    except (TypeError, ValueError) as e:
+        print(f"Error: Data provided is not JSON serializable. Details: {e}")
+    except OSError as e:
+        print(f"File error: {e}")
 
 
 #------------------------------------------------------------
 if __name__ == '__main__':
-    Player1 = Player('Taras')
-    Player2 = Agent('Bot1')
+    Player1 = Agent('Bot1')
+    Player2 = Agent('Bot2')
     q_values = load_q_values()
-    game = Game(Player1, Player2, q_values)
+    for _ in range(5):
+        Game(Player1, Player2, q_values)
+    save_q_values(q_values)
+
 
