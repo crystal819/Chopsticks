@@ -100,7 +100,6 @@ def attack_function(current_player, not_current_player):
         if recipient_hand_str == 'back':
             return 'back'
     recipient_hand = get_hand(not_current_player, recipient_hand_str)
-    print(attacking_hand.get_value(), recipient_hand.get_value(), 'STOPPPp')
     current_player.attack(attacking_hand, recipient_hand)
     return None
 
@@ -116,7 +115,7 @@ def split_function(current_player):
     
 #-----------------------------------------------------------
 class Game:
-    def __init__(self, Player1, Player2):
+    def __init__(self, Player1, Player2, q_values=None):
         current_player = Player1
         not_current_player = Player2
         state = (Player1.left.get_value(), Player1.right.get_value(), Player2.left.get_value(), Player2.right.get_value())
@@ -142,7 +141,8 @@ class Game:
                         print("Returning back")
                         time.sleep(1)
             elif type(current_player).__name__ == 'Agent':
-                current_player.make_move(state)
+                current_player.make_move(state, q_values, not_current_player)
+                current_player, not_current_player = switch_players(current_player, not_current_player)
             state = (Player1.left.get_value(), Player1.right.get_value(), Player2.left.get_value(), Player2.right.get_value())
 
         if Player1.right.get_value() + Player1.left.get_value() == 0:

@@ -2,14 +2,104 @@ import random
 import json
 from main import Player, Game
 
-#state = (p1l, p1r, p2l, p2r)
+#<state> format = (p1l, p1r, p2l, p2r)
 
 
 class Agent(Player):
-    def __init__(self):
-        super().__init__(name='Agent')
+    def __init__(self, name):
+        super().__init__(name=name)
 
-agent = Agent()
+    def make_move(self, state, q_values, opponent):
+        epsilon = 0.9 #exploration rate
+        highest_action = self.max_Q(state, q_values)[1]
+
+        if random.randint(0, 100) / 100 > epsilon: #exploitation
+            action = highest_action
+        else: #exploration
+            action = random.choice(self.get_valid_moves(state))
+        
+        print(action)
+
+        if action[0] == 'a': #chosen to attack
+            if action[1] == 0:
+                attacking_hand = self.left
+            else:
+                attacking_hand = self.right
+            if action[2] == 0:
+                recieving_hand = opponent.left
+            else:
+                recieving_hand = opponent.right
+            self.attack(attacking_hand, recieving_hand)
+
+        else: #chosen to split
+            if action[1] == 0:
+                splitting_hand = self.left
+                recieving_hand = self.right
+            else:
+                splitting_hand = self.right
+                recieving_hand = self.left
+
+            self.split(action[2], splitting_hand, recieving_hand)
+        
+        if self.left.get_value() + self.right.get_value() == 0:
+            reward = -1
+        elif opponent.left.get_value() + opponent.right.get_value() == 0:
+            reward = 1
+        else:
+            reward = 0
+
+        self.updateQsa(state, action, q_values, reward)
+
+    def max_Q(self, state, q_values): #returns a list with the q_value and its action with the highest q_value in this state
+        highest = -1000000
+        highest_action = None
+        legal_moves = self.get_valid_moves(state)
+
+        if state not in q_values: #adds state if not present
+            q_values[state] = {}
+        for action in legal_moves:
+            if action not in q_values[state]: #adds action if not present
+                q_values[state][action] = 0
+            if q_values[state][action] > highest:
+                highest = q_values[state][action]
+                highest_action = action
+        return [highest, highest_action]
+                
+    def get_valid_moves(self, state):
+        #for attack
+        valid_moves = []
+        if state[0] != 0:
+            if state[2] != 0:
+                valid_moves.append(('a', 0, 0)) #attack, self hand, opponent hand
+            if state[3] != 0:
+                valid_moves.append(('a', 0, 1))
+        if state[1] != 0:
+            if state[2] != 0:
+                valid_moves.append(('a', 1, 0))
+            if state[3] != 0:
+                valid_moves.append(('a', 1, 1))
+        
+        #for splitting
+        if self.left.get_value() != 0:
+            for i in range(1, self.left.get_value()+1):
+                temp = self.right.get_value() + i
+                if temp != self.left.get_value():
+                    valid_moves.append(('s', 0, i)) #split, splitting hand, amount
+        elif self.right.get_value() != 0:
+            for i in range(1, self.right.get_value()+1):
+                temp = self.left.get_value() + i
+                if temp != self.right.get_value():
+                    valid_moves.append(('s', 0, i)) 
+
+        return valid_moves #returns the valid moves in a list
+
+    def updateQsa(self, state, action, q_values, reward): #updates Q(s,a) based on the state and the action taken in it
+        alpha = 0.1 #learning rate
+        gamma = 0.9 #discount factor - how much future rewards matter compared to immediate rewards
+
+        q_values[state][action] = q_values[state][action] + alpha*(reward + gamma*self.max_Q(state, q_values)[0] - q_values[state][action])
+
+ 
 
 
 def load_q_values():
@@ -20,53 +110,12 @@ def load_q_values():
 
 
 
-def get_valid_moves(state):
-    #for attack
-    valid_moves = []
-    if state[0] != 0:
-        if state[2] != 0:
-            valid_moves.append(('a', 0, 0)) #attack, self hand, opponent hand
-        if state[3] != 0:
-            valid_moves.append(('a', 0, 1))
-    if state[1] != 0:
-        if state[2] != 0:
-            valid_moves.append(('a', 1, 0))
-        if state[3] != 0:
-            valid_moves.append(('a', 1, 1))
-    
-    #for splitting
-    if state[0] != 0:
-        for i in range(1, state[0]+1):
-            temp = state[1] + i
-            if temp != state[0]:
-                valid_moves.append(('s', 0, i)) #split, splitting hand, amount
-    elif state[1] != 0:
-        for i in range(1, state[1]+1):
-            temp = state[0] + i
-            if temp != state[1]:
-                valid_moves.append(('s', 0, i)) 
-
-    return valid_moves #returns the valid moves in a list
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-q_values = load_q_values()
 
 
 #------------------------------------------------------------
 if __name__ == '__main__':
     Player1 = Player('Taras')
     Player2 = Agent('Bot1')
-    game = Game(Player1, Player2)
+    q_values = load_q_values()
+    game = Game(Player1, Player2, q_values)
 
