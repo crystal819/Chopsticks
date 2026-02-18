@@ -45,7 +45,6 @@ class Hand:
 
 #-------------------------------------------------------------
 
-
 def switch_players(current_player, not_current_player):
     temp = current_player
     current_player = not_current_player
@@ -114,17 +113,28 @@ def split_function(current_player):
             return 'back'
     
 #-----------------------------------------------------------
+
 class Game:
     def __init__(self, Player1, Player2, q_values=None):
+        self.Player1 = Player1
+        self.Player2 = Player2
+        self.q_values = q_values
+        self.scores = [0,0]
+
+    def play(self):
+        Player1 = self.Player1
+        Player2 = self.Player2
+        q_values = self.q_values
         current_player = Player1
         not_current_player = Player2
         Player1.left.set_value(1)
         Player1.right.set_value(1)
         Player2.left.set_value(1)
         Player2.right.set_value(1)
+        
         state = (Player1.left.get_value(), Player1.right.get_value(), Player2.left.get_value(), Player2.right.get_value(), 0) #0 means which players move it is
         while state[0] + state[1] > 0 and state[2] + state[3] > 0:
-            print(f"scores: {Player1.name} {Player1.left.get_value()} {Player1.right.get_value()}\n{Player2.name} {Player2.left.get_value()} {Player2.right.get_value()}")
+            #print(f"scores: {Player1.name} {Player1.left.get_value()} {Player1.right.get_value()}\n{Player2.name} {Player2.left.get_value()} {Player2.right.get_value()}")
             if type(current_player).__name__ == 'Player':
                 choice = input(current_player.name + " attack or split: ").lower()
                 while choice not in ['attack', 'split']:
@@ -153,12 +163,15 @@ class Game:
                 state = (Player1.left.get_value(), Player1.right.get_value(), Player2.left.get_value(), Player2.right.get_value(), 0)
 
         if Player1.right.get_value() + Player1.left.get_value() == 0:
-            print(Player2.name, 'Wins!!!!')
+            self.scores[1] += 1
+            #print(Player2.name, 'Wins!!!!')
         else:
-            print(Player1.name, 'Wins!!!!')
+            self.scores[0] += 1
+            #print(Player1.name, 'Wins!!!!')
         
 #------------------------------------------------------------
 if __name__ == '__main__':
     Player1 = Player('Taras')
     Player2 = Player('Yarema')
     game = Game(Player1, Player2)
+    game.play()

@@ -2,8 +2,7 @@ import random
 import json
 from main import Player, Game
 
-#<state> format = (p1l, p1r, p2l, p2r)
-
+#<state> format = (p1l, p1r, p2l, p2r, x) where x is either 0 or 1 where 0 represents the current player as player 1
 
 class Agent(Player):
     def __init__(self, name):
@@ -13,12 +12,11 @@ class Agent(Player):
         epsilon = 0.9 #exploration rate
         highest_action = self.max_Q(state, q_values)[1]
 
+        
         if random.randint(0, 100) / 100 > epsilon: #exploitation
             action = highest_action
         else: #exploration
             action = random.choice(self.get_valid_moves(state))
-        
-        print(self.name, action)
 
         if action[0] == 'a': #chosen to attack
             if action[1] == 0:
@@ -95,7 +93,7 @@ class Agent(Player):
             if state[2] != 0:
                 if state[0] != 0:
                     valid_moves.append(('a', 0, 0)) #attack, self hand, opponent hand
-                if state[3] != 0:
+                if state[1] != 0:
                     valid_moves.append(('a', 0, 1))
             if state[3] != 0:
                 if state[0] != 0:
@@ -123,9 +121,6 @@ class Agent(Player):
 
         q_values[str(state)][str(action)] = q_values[str(state)][str(action)] + alpha*(reward + gamma*self.max_Q(state, q_values)[0] - q_values[str(state)][str(action)])
 
- 
-
-
 def load_q_values():
     with open('q_learning_values_for_bot.json', 'r') as file:
         q_values = json.loads(file.read())
@@ -146,8 +141,10 @@ if __name__ == '__main__':
     Player1 = Agent('Bot1')
     Player2 = Agent('Bot2')
     q_values = load_q_values()
-    for i in range(5):
-        game = Game(Player1, Player2, q_values)
+    game = Game(Player1, Player2, q_values)
+    for i in range(50):
+        game.play()
     save_q_values(q_values)
+    print(game.scores)
 
 
