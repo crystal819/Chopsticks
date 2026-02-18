@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row">
+    <div class="d-flex align-items-center justify-content-center">
+        <h2>Chopsticks</h2>
+    </div>
+</div>
+
+<div class="m-5"></div>
+
+<div class="row">
+    <div class="d-flex align-items-center justify-content-center">
+        <button id="opponent-left-btn" class="col-md-6"><img class="opponent-img" src="{{ url_for('static', filename='img/left_1.png')}}"></button>
+        <button id="opponent-right-btn" class="col-md-6"><img class="opponent-img" src="{{ url_for('static', filename='img/right_1.png')}}"></button>
+    </div>
+</div>
+<div class="m-5">
+
+</div>
+<div class="row">
+    <div class="d-flex align-items-center justify-content-center">
+        <button id="player-left-btn" class="col-md-6"><img class="player-img" src="{{ url_for('static', filename='img/left_1.png')}}"></button>
+        <button id="player-right-btn" class="col-md-6"><img class="player-img" src="{{ url_for('static', filename='img/right_1.png')}}"></button>
+    </div>
+</div>
+
+
+{% endblock %}

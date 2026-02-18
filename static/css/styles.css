@@ -1,0 +1,56 @@
+.opponent-img {
+    transform: scaleY(-1);
+}
+
+#opponent-left-btn {
+    width: 150px;
+    background-color: transparent;
+    border-color: transparent;
+}
+#opponent-right-btn {
+    width: 150px;
+    background-color: transparent;
+    border-color: transparent;
+}
+#player-left-btn {
+    width: 150px;
+    background-color: transparent;
+    border-color: transparent;
+}
+#player-right-btn {
+    width: 150px;
+    background-color: transparent;
+    border-color: transparent;
+}
+
+#opponent-left-btn:hover {
+    transform: scale(0.95);
+}
+
+#opponent-left-btn:active {
+    transform: scale(0.90);
+}
+
+#opponent-right-btn:hover {
+    transform: scale(0.95);
+}
+
+#opponent-right-btn:active {
+    transform: scale(0.90);
+}
+
+#player-left-btn:hover {
+    transform: scale(0.95);
+}
+
+#player-left-btn:active {
+    transform: scale(0.90);
+}
+
+#player-right-btn:hover {
+    transform: scale(0.95);
+}
+
+#player-right-btn:active {
+    transform: scale(0.90);
+}

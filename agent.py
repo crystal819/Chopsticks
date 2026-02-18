@@ -1,6 +1,7 @@
 import random
 import json
 from main import Player, Game
+import time
 
 #<state> format = (p1l, p1r, p2l, p2r, x) where x is either 0 or 1 where 0 represents the current player as player 1
 
@@ -138,13 +139,16 @@ def save_q_values(q_values):
 
 #------------------------------------------------------------
 if __name__ == '__main__':
+    start_time = time.perf_counter()
     Player1 = Agent('Bot1')
     Player2 = Agent('Bot2')
     q_values = load_q_values()
     game = Game(Player1, Player2, q_values)
-    for i in range(50):
+    for i in range(10000):
         game.play()
     save_q_values(q_values)
+    end_time = time.perf_counter()
+    print(end_time - start_time)
     print(game.scores)
 
 
