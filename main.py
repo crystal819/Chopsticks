@@ -118,7 +118,11 @@ class Game:
     def __init__(self, Player1, Player2, q_values=None):
         current_player = Player1
         not_current_player = Player2
-        state = (Player1.left.get_value(), Player1.right.get_value(), Player2.left.get_value(), Player2.right.get_value())
+        Player1.left.set_value(1)
+        Player1.right.set_value(1)
+        Player2.left.set_value(1)
+        Player2.right.set_value(1)
+        state = (Player1.left.get_value(), Player1.right.get_value(), Player2.left.get_value(), Player2.right.get_value(), 0) #0 means which players move it is
         while state[0] + state[1] > 0 and state[2] + state[3] > 0:
             print(f"scores: {Player1.name} {Player1.left.get_value()} {Player1.right.get_value()}\n{Player2.name} {Player2.left.get_value()} {Player2.right.get_value()}")
             if type(current_player).__name__ == 'Player':
@@ -143,7 +147,10 @@ class Game:
             elif type(current_player).__name__ == 'Agent':
                 current_player.make_move(state, q_values, not_current_player)
                 current_player, not_current_player = switch_players(current_player, not_current_player)
-            state = (Player1.left.get_value(), Player1.right.get_value(), Player2.left.get_value(), Player2.right.get_value())
+            if state[4] == 0:
+                state = (Player1.left.get_value(), Player1.right.get_value(), Player2.left.get_value(), Player2.right.get_value(), 1)
+            elif state[4] == 1:
+                state = (Player1.left.get_value(), Player1.right.get_value(), Player2.left.get_value(), Player2.right.get_value(), 0)
 
         if Player1.right.get_value() + Player1.left.get_value() == 0:
             print(Player2.name, 'Wins!!!!')

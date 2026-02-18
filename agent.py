@@ -18,7 +18,7 @@ class Agent(Player):
         else: #exploration
             action = random.choice(self.get_valid_moves(state))
         
-        print(action)
+        print(self.name, action)
 
         if action[0] == 'a': #chosen to attack
             if action[1] == 0:
@@ -68,28 +68,52 @@ class Agent(Player):
     def get_valid_moves(self, state):
         #for attack
         valid_moves = []
-        if state[0] != 0:
+        if state[4] == 0:
+            if state[0] != 0:
+                if state[2] != 0:
+                    valid_moves.append(('a', 0, 0)) #attack, self hand, opponent hand
+                if state[3] != 0:
+                    valid_moves.append(('a', 0, 1))
+            if state[1] != 0:
+                if state[2] != 0:
+                    valid_moves.append(('a', 1, 0))
+                if state[3] != 0:
+                    valid_moves.append(('a', 1, 1))
+            
+            #for splitting
+            if state[0] != 0:
+                for i in range(1, state[0]+1):
+                    temp = state[1] + i
+                    if temp != state[0]:
+                        valid_moves.append(('s', 0, i)) #split, splitting hand, amount
+            elif state[1] != 0:
+                for i in range(1, state[1]+1):
+                    temp = state[0] + i
+                    if temp != state[1]:
+                        valid_moves.append(('s', 1, i)) 
+        else:
             if state[2] != 0:
-                valid_moves.append(('a', 0, 0)) #attack, self hand, opponent hand
+                if state[0] != 0:
+                    valid_moves.append(('a', 0, 0)) #attack, self hand, opponent hand
+                if state[3] != 0:
+                    valid_moves.append(('a', 0, 1))
             if state[3] != 0:
-                valid_moves.append(('a', 0, 1))
-        if state[1] != 0:
+                if state[0] != 0:
+                    valid_moves.append(('a', 1, 0))
+                if state[1] != 0:
+                    valid_moves.append(('a', 1, 1))
+            
+            #for splitting
             if state[2] != 0:
-                valid_moves.append(('a', 1, 0))
-            if state[3] != 0:
-                valid_moves.append(('a', 1, 1))
-        
-        #for splitting
-        if self.left.get_value() != 0:
-            for i in range(1, self.left.get_value()+1):
-                temp = self.right.get_value() + i
-                if temp != self.left.get_value():
-                    valid_moves.append(('s', 0, i)) #split, splitting hand, amount
-        elif self.right.get_value() != 0:
-            for i in range(1, self.right.get_value()+1):
-                temp = self.left.get_value() + i
-                if temp != self.right.get_value():
-                    valid_moves.append(('s', 1, i)) 
+                for i in range(1, state[2]+1):
+                    temp = state[3] + i
+                    if temp != state[2]:
+                        valid_moves.append(('s', 0, i)) #split, splitting hand, amount
+            elif state[3] != 0:
+                for i in range(1, state[3]+1):
+                    temp = state[2] + i
+                    if temp != state[3]:
+                        valid_moves.append(('s', 1, i)) 
 
         return valid_moves #returns the valid moves in a list
 
@@ -122,8 +146,8 @@ if __name__ == '__main__':
     Player1 = Agent('Bot1')
     Player2 = Agent('Bot2')
     q_values = load_q_values()
-    for _ in range(5):
-        Game(Player1, Player2, q_values)
+    for i in range(5):
+        game = Game(Player1, Player2, q_values)
     save_q_values(q_values)
 
 
