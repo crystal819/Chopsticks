@@ -1,5 +1,11 @@
 .opponent-img {
     transform: scaleY(-1);
+    height: 100px;
+    width: auto;
+}
+.player-img {
+    height: 100px;
+    width: auto;
 }
 
 #opponent-left-btn {
@@ -26,15 +32,12 @@
 #opponent-left-btn:hover {
     transform: scale(0.95);
 }
-
 #opponent-left-btn:active {
     transform: scale(0.90);
 }
-
 #opponent-right-btn:hover {
     transform: scale(0.95);
 }
-
 #opponent-right-btn:active {
     transform: scale(0.90);
 }
@@ -42,15 +45,12 @@
 #player-left-btn:hover {
     transform: scale(0.95);
 }
-
 #player-left-btn:active {
     transform: scale(0.90);
 }
-
 #player-right-btn:hover {
     transform: scale(0.95);
 }
-
 #player-right-btn:active {
     transform: scale(0.90);
 }
