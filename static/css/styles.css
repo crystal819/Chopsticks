@@ -1,4 +1,4 @@
-.opponent-img {
+.player2-img {
     transform: scaleY(-1);
     height: 100px;
     width: auto;
@@ -8,12 +8,12 @@
     width: auto;
 }
 
-#opponent-left-btn {
+#player2-left-btn {
     width: 150px;
     background-color: transparent;
     border-color: transparent;
 }
-#opponent-right-btn {
+#player2-right-btn {
     width: 150px;
     background-color: transparent;
     border-color: transparent;
@@ -29,16 +29,16 @@
     border-color: transparent;
 }
 
-#opponent-left-btn:hover {
+#player2-left-btn:hover {
     transform: scale(0.95);
 }
-#opponent-left-btn:active {
+#player2-left-btn:active {
     transform: scale(0.90);
 }
-#opponent-right-btn:hover {
+#player2-right-btn:hover {
     transform: scale(0.95);
 }
-#opponent-right-btn:active {
+#player2-right-btn:active {
     transform: scale(0.90);
 }
 
@@ -53,4 +53,17 @@
 }
 #player-right-btn:active {
     transform: scale(0.90);
+}
+
+#player2-left-btn.selected {
+    background-color: #b3e5db;
+}
+#player2-right-btn.selected {
+    background-color: #b3e5db;
+}
+#player-left-btn.selected {
+    background-color: #b3e5db;
+}
+#player-right-btn.selected {
+    background-color: #b3e5db;
 }

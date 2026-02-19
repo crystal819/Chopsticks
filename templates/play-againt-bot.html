@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+<section style="height: 100px;"></section>
+
+<div class="row">
+    <div class="d-flex align-items-center justify-content-center">
+        <button id="player2-left-btn" class="col-md-5" data-value="1"><img class="player2-img" src="{{ url_for('static', filename='img/left_1.png')}}"></button>
+        <section class="col-md-1"></section>
+        <button id="player2-right-btn" class="col-md-6" data-value="1"><img class="player2-img" src="{{ url_for('static', filename='img/right_1.png')}}"></button>
+    </div>
+</div>
+<section style="height:300px;"></section>
+<div class="row">
+    <div class="d-flex align-items-center justify-content-center">
+        <button id="player-left-btn" class="col-md-5" data-value="1"><img class="player-img" src="{{ url_for('static', filename='img/left_1.png')}}"></button>
+        <section class="col-md-1"></section>
+        <button id="player-right-btn" class="col-md-6" data-value="1"><img class="player-img" src="{{ url_for('static', filename='img/right_1.png')}}"></button>
+    </div>
+</div>
+
+<script>
+const playerLeftBTN = document.getElementById("player-left-btn")
+playerLeftBTN.addEventListener("click", () => {
+    if (playerLeftBTN.classList.contains('selected')) {
+        playerLeftBTN.classList.remove('selected')
+    } else {
+        playerLeftBTN.classList.add('selected')
+        if (playerRightBTN.classList.contains('selected')) {
+            determineMove(playerLeftBTN, playerRightBTN)
+        } else if (player2RightBTN.classList.contains('selected')) {
+            determineMove(playerLeftBTN, player2RightBTN)
+        } else if (player2LeftBTN.classList.contains('selected')) {
+            determineMove(playerLeftBTN, player2LeftBTN)
+        }
+    }
+})
+const playerRightBTN = document.getElementById("player-right-btn")
+playerRightBTN.addEventListener("click", () => {
+    if (playerRightBTN.classList.contains('selected')) {
+        playerRightBTN.classList.remove('selected')
+    } else {
+        playerRightBTN.classList.add('selected')
+        if (playerLeftBTN.classList.contains('selected')) {
+            determineMove(playerRightBTN, playerLeftBTN)
+        } else if (player2RightBTN.classList.contains('selected')) {
+            determineMove(playerRightBTN, player2RightBTN)
+        } else if (player2LeftBTN.classList.contains('selected')) {
+            determineMove(playerRightBTN, player2LeftBTN)
+        }
+    }
+})
+const player2LeftBTN = document.getElementById("player2-left-btn")
+player2LeftBTN.addEventListener("click", () => {
+    if (player2LeftBTN.classList.contains('selected')) {
+        player2LeftBTN.classList.remove('selected')
+    } else {
+        player2LeftBTN.classList.add('selected')
+    }
+})
+const player2RightBTN = document.getElementById("player2-right-btn")
+player2RightBTN.addEventListener("click", () => {
+    if (player2RightBTN.classList.contains('selected')) {
+        player2RightBTN.classList.remove('selected')
+    } else {
+        player2RightBTN.classList.add('selected')
+    }
+})
+
+
+function attackMove(hand1, hand2) {
+    fetch('/perform-move', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            'move': 'attack',
+            'hand1': Number(hand1.dataset.value),
+            'hand2': Number(hand2.dataset.value)
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data['isSuccessful'] === true) {
+            hand2.dataset.value = string(data['hand2'])
+        } else (
+            console.log(data['error-msg'])
+        )
+    })
+}
+
+function splitMove(hand1, hand2, amount) {
+    fetch('/perform-move', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            'move': 'split',
+            'hand1': Number(hand1.dataset.value),
+            'hand2': Number(hand2.dataset.value),
+            'amount': amount
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data['isSuccessful'] === true) {
+            hand1.dataset.value = string(data['hand1'])
+            hand2.dataset.value = string(data['hand2'])
+        } else (
+            console.log(data['error-msg'])
+        )
+    })
+}
+</script>
+
+{% endblock %}

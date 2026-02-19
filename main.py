@@ -21,6 +21,12 @@ class Player:
         if temp_splitter == recipient_hand.get_value() and temp_recipient == splitter_hand.get_value():
             print("You cannot switch around the hands")
             return False
+        elif amount > splitter_hand:
+            print("you cannot split this amount")
+            return False
+        elif amount == 0 or splitter_hand == 0:
+            print("You cannot split 0 or from a hand with 0")
+            return False        
         else:
             splitter_hand.set_value(splitter_hand.get_value() - amount) 
             recipient_hand.set_value((recipient_hand.get_value() + amount)%5)
