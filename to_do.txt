@@ -1,0 +1,6 @@
+- Utilize session from flask to store player objects across multiple requests
+- Create the play-against-bot page and its functionality
+- Create the play-against-player page and its functionality
+- Add a db to store usernames and passwords (and maybe apply a hash alg to hide them)
+- Store the wins/losses in a db
+- Find a way to server host this globally

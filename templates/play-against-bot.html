@@ -1,24 +1,30 @@
 {% extends 'base.html' %}
 {% block content %}
 
+<div class="d-flex center-align-items justify-content-center">
+    <h4>-against a bot</h4>
+</div>
 
 <section style="height: 100px;"></section>
 
+<div class="d-flex align-items-center justify-content-center"><h3>Bot</h3></div>
 <div class="row">
     <div class="d-flex align-items-center justify-content-center">
-        <button id="player2-left-btn" class="col-md-5" data-value="1"><img class="player2-img" src="{{ url_for('static', filename='img/left_1.png')}}"></button>
+        <button id="player2-left-btn" class="col-md-5" data-value="{{ game_data['player2l'] }}"><img class="player2-img" src="{{ url_for('static', filename='img/left_1.png')}}"></button>
         <section class="col-md-1"></section>
-        <button id="player2-right-btn" class="col-md-6" data-value="1"><img class="player2-img" src="{{ url_for('static', filename='img/right_1.png')}}"></button>
+        <button id="player2-right-btn" class="col-md-6" data-value="{{ game_data['player2r'] }}"><img class="player2-img" src="{{ url_for('static', filename='img/right_1.png')}}"></button>
     </div>
 </div>
-<section style="height:300px;"></section>
+<section style="height:200px;"></section>
+
 <div class="row">
     <div class="d-flex align-items-center justify-content-center">
-        <button id="player-left-btn" class="col-md-5" data-value="1"><img class="player-img" src="{{ url_for('static', filename='img/left_1.png')}}"></button>
+        <button id="player-left-btn" class="col-md-5" data-value="{{ game_data['player1l'] }}"><img class="player-img" src="{{ url_for('static', filename='img/left_1.png')}}"></button>
         <section class="col-md-1"></section>
-        <button id="player-right-btn" class="col-md-6" data-value="1"><img class="player-img" src="{{ url_for('static', filename='img/right_1.png')}}"></button>
+        <button id="player-right-btn" class="col-md-6" data-value="{{ game_data['player1r'] }}"><img class="player-img" src="{{ url_for('static', filename='img/right_1.png')}}"></button>
     </div>
 </div>
+<div class="d-flex align-items-center justify-content-center"><h3>{{ name }}</h3></div>
 
 <script>
 const playerLeftBTN = document.getElementById("player-left-btn")

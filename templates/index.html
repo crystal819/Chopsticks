@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<section style="height: 300px;"></section>
+<div class="row">
+    <div class="d-flex align-items-center justify-content-center">
+        <form method="POST">
+            <input id="inputName" name="username" placeholder="Enter username" type="text">
+
+            <button id="botBTN" type="submit" formaction="{{ url_for('play_against_bot') }}" onclick="">Play against bot</button>
+            <button id="playerBTN" type="submit" formaction="{{ url_for('play_against_player') }}">Play against player</button>
+        </form>
+    </div>
+</div>
+
+
+
+<script>
+function playAgainstBot() {
+    fetch('/')
+}
+
+
+
+</script>
+
+
+
+{% endblock %}
