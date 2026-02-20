@@ -45,8 +45,52 @@ def perform_move():
 
     data = request.get_json()
     if data['move'] == 'attack':
+        if data['playerSide'] == 'left':
+            attacker_hand = Player1.left
+        else:
+            attacker_hand = Player1.right
+        if data['opponentSide'] == 'left':
+            recipient_hand = Player2.left
+        else:
+            recipient_hand = Player2.right
+        result = Player1.attack(attacker_hand, recipient_hand)
+        if result == True:
+            if data['opponentSide'] == 'left':
+                if recipient_hand.get_value() == 0:
+                    img_url = '/static/img/left_0'
+                elif recipient_hand.get_value() == 1:
+                    img_url = '/static/img/left_1'
+                elif recipient_hand.get_value() == 2:
+                    img_url = '/static/img/left_2'
+                elif recipient_hand.get_value() == 3:
+                    img_url = '/static/img/left_3'
+                elif recipient_hand.get_value() == 4:
+                    img_url = '/static/img/left_4'
+            elif data['opponentSide'] == 'right':
+                if recipient_hand.get_value() == 0:
+                    img_url = '/static/img/right_0'
+                elif recipient_hand.get_value() == 1:
+                    img_url = '/static/img/right_1'
+                elif recipient_hand.get_value() == 2:
+                    img_url = '/static/img/right_2'
+                elif recipient_hand.get_value() == 3:
+                    img_url = '/static/img/right_3'
+                elif recipient_hand.get_value() == 4:
+                    img_url = '/static/img/right_4'
+            output = jsonify({
+                'isSuccessful': True,
+                'playerHand': attacker_hand.get_value(),
+                'opponentHand': recipient_hand.get_value(),
+                'opponentImgUrl': img_url
+            })
+
+    elif data['move'] == 'split':
         pass
-    return 'x'
+    elif data['move'] == 'deterimneAmount':
+        pass
+
+
+    return output
 
 
 

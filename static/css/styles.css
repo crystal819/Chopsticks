@@ -7,7 +7,7 @@
     height: 100px;
     width: auto;
 }
-
+/*-----------------------------------------------*/
 #player2-left-btn {
     width: 150px;
     background-color: transparent;
@@ -67,3 +67,4 @@
 #player-right-btn.selected {
     background-color: #b3e5db;
 }
+/*----------------------------------------------------------------*/

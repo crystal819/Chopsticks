@@ -4,3 +4,5 @@
 - Add a db to store usernames and passwords (and maybe apply a hash alg to hide them)
 - Store the wins/losses in a db
 - Find a way to server host this globally
+- Remove the split buttons after appearing if the user deselects their hand
+- Prevent the user from selecting more than two hands
