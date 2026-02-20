@@ -1,12 +1,11 @@
 from flask import Flask, render_template, jsonify, request, session
-from agent import Agent
+from agent import Agent, load_q_values
 from main import Player, Game
 
 app = Flask(__name__)
 app.secret_key = 'HelloWorld!'
 
-Player1 = None
-Player2 = None
+
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -22,6 +21,8 @@ def play_against_bot():
     Player1 = Player(request.form['username'])
     global Player2
     Player2 = Agent('bot')
+    global q_values
+    q_values = load_q_values()
 
     return render_template('play-against-bot.html',
                            name = request.form['username'],
@@ -42,8 +43,13 @@ def play_against_player():
 
 @app.route('/perform-move', methods=['POST'])
 def perform_move():
+    global Player1
+    global Player2
+    global q_values
+
 
     data = request.get_json()
+    print(data['move'])
     if data['move'] == 'attack':
         if data['playerSide'] == 'left':
             attacker_hand = Player1.left
@@ -55,33 +61,29 @@ def perform_move():
             recipient_hand = Player2.right
         result = Player1.attack(attacker_hand, recipient_hand)
         if result == True:
-            if data['opponentSide'] == 'left':
-                if recipient_hand.get_value() == 0:
-                    img_url = '/static/img/left_0'
-                elif recipient_hand.get_value() == 1:
-                    img_url = '/static/img/left_1'
-                elif recipient_hand.get_value() == 2:
-                    img_url = '/static/img/left_2'
-                elif recipient_hand.get_value() == 3:
-                    img_url = '/static/img/left_3'
-                elif recipient_hand.get_value() == 4:
-                    img_url = '/static/img/left_4'
-            elif data['opponentSide'] == 'right':
-                if recipient_hand.get_value() == 0:
-                    img_url = '/static/img/right_0'
-                elif recipient_hand.get_value() == 1:
-                    img_url = '/static/img/right_1'
-                elif recipient_hand.get_value() == 2:
-                    img_url = '/static/img/right_2'
-                elif recipient_hand.get_value() == 3:
-                    img_url = '/static/img/right_3'
-                elif recipient_hand.get_value() == 4:
-                    img_url = '/static/img/right_4'
+            img_url = f"/static/img/{data['opponentSide']}_{recipient_hand.get_value()}.png"
+
+            if Player1.left.get_value() + Player1.right.get_value() == 0:
+                game_state = 'player lost'
+            elif Player2.left.get_value() + Player2.right.get_value() == 0:
+                game_state = 'player won'
+            else:
+                game_state = 'continuing'
+                Player2.make_move((Player1.left.get_value(), Player1.right.get_value(), Player2.left.get_value(), Player2.right.get_value(), 1), q_values, Player1) #assuming that the bot is always 2nd to play
+                if Player1.left.get_value() + Player1.right.get_value() == 0:
+                    game_state = 'player lost bot'
+                elif Player2.left.get_value() + Player2.right.get_value() == 0:
+                    game_state = 'player won bot'
+
             output = jsonify({
                 'isSuccessful': True,
                 'playerHand': attacker_hand.get_value(),
                 'opponentHand': recipient_hand.get_value(),
-                'opponentImgUrl': img_url
+                'opponentImgUrl': img_url,
+                'errorMsg': 'Something went wrong',
+                'handsAfter': [Player1.left.get_value(), Player1.right.get_value(), Player2.left.get_value(), Player2.right.get_value()],
+                'gameState': game_state,
+                'handsAfterUrl': [f"/static/img/left_{Player1.left.get_value()}.png", f"/static/img/right_{Player1.right.get_value()}.png", f"/static/img/left_{Player2.left.get_value()}.png", f"/static/img/right_{Player2.right.get_value()}.png"]
             })
 
     elif data['move'] == 'split':
@@ -92,7 +94,8 @@ def perform_move():
 
     return output
 
-
+def get_url(p1l, p1r, p2l, p2r):
+    return 
 
 if __name__ == '__main__':
     app.run(debug=True)

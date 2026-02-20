@@ -77,6 +77,11 @@ player2LeftBTN.addEventListener("click", () => {
         player2LeftBTN.classList.remove('selected')
     } else {
         player2LeftBTN.classList.add('selected')
+        if (playerRightBTN.classList.contains('selected')) {
+            attackMove(playerRightBTN, player2LeftBTN, 'right', 'left')
+        } else if (playerLeftBTN.classList.contains('selected')) {
+            attackMove(playerLeftBTN, player2LeftBTN, 'left', 'left')
+        }
     }
 })
 const player2RightBTN = document.getElementById("player2-right-btn")
@@ -86,6 +91,11 @@ player2RightBTN.addEventListener("click", () => {
         player2RightBTN.classList.remove('selected')
     } else {
         player2RightBTN.classList.add('selected')
+        if (playerRightBTN.classList.contains('selected')) {
+            attackMove(playerRightBTN, player2RightBTN, 'right', 'right')
+        } else if (playerLeftBTN.classList.contains('selected')) {
+            attackMove(playerLeftBTN, player2RightBTN, 'left', 'right')
+        }
     }
 })
 
@@ -120,14 +130,34 @@ function attackMove(playerHand, opponentHand, playerSide, opponentSide) {
         })
     })
     .then(res => res.json())
-    .then(data => {
+    .then(async data => {
+        console.log("attack recieved")
         if (data['isSuccessful'] === true) {
-            hand2.dataset.value = string(data['hand2'])
-            hand2.querySelector('img').src = data['img_url']
+            opponentHand.dataset.value = String(data['hand2'])
+            opponentHand.querySelector('img').src = data['opponentImgUrl']
+            playerHand.classList.remove('selected')
+            opponentHand.classList.remove('selected')
+
+            console.log("right before")
+            await sleep(2000)
+            console.log("2s later")
+            console.log(data['botmove'])
+            playerLeftBTN.dataset.value = String(data['handsAfter'][0])
+            playerRightBTN.dataset.value = String(data['handsAfter'][1])
+            player2LeftBTN.dataset.value = String(data['handsAfter'][2])
+            player2RightBTN.dataset.value = String(data['handsAfter'][3])
+            playerLeftBTN.querySelector('img').src = data['handsAfterUrl'][0]
+            playerRightBTN.querySelector('img').src = data['handsAfterUrl'][1]
+            player2LeftBTN.querySelector('img').src = data['handsAfterUrl'][2]
+            player2RightBTN.querySelector('img').src = data['handsAfterUrl'][3]
         } else (
-            console.log(data['error-msg'])
+            console.log(data['errorMsg'])
         )
     })
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms))
 }
 
 function splitMove(hand1, hand2, amount) {
@@ -211,8 +241,26 @@ function updateOrder(handBtn) {
         handBtn.dataset.order = ''
         console.log("set to null")
     }
+    if (playerLeftBTN.dataset.order > 2) {
+        playerLeftBTN.dataset.order = ''
+        playerLeftBTN.classList.remove('selected')
+    }
+    if (playerRightBTN.dataset.order > 2) {
+        playerRightBTN.dataset.order = ''
+        playerRightBTN.classList.remove('selected')
+    }
+    if (player2LeftBTN.dataset.order > 2) {
+        player2LeftBTN.dataset.order = ''
+        player2LeftBTN.classList.remove('selected')
+    }
+    if (player2RightBTN.dataset.order > 2) {
+        player2RightBTN.dataset.order = ''
+        player2RightBTN.classList.remove('selected')
+    }
     console.log('after', playerLeftBTN.dataset.order, 'pl', playerRightBTN.dataset.order, 'pr', player2LeftBTN.dataset.order, 'ol', player2RightBTN.dataset.order, 'or')
 }
+
+
 
 </script>
 

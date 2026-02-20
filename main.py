@@ -21,10 +21,10 @@ class Player:
         if temp_splitter == recipient_hand.get_value() and temp_recipient == splitter_hand.get_value():
             print("You cannot switch around the hands")
             return False
-        elif amount > splitter_hand:
+        elif amount > splitter_hand.get_value():
             print("you cannot split this amount")
             return False
-        elif amount == 0 or splitter_hand == 0:
+        elif amount == 0 or splitter_hand.get_value() == 0:
             print("You cannot split 0 or from a hand with 0")
             return False        
         else:
@@ -127,7 +127,7 @@ class Game:
         self.q_values = q_values
         self.scores = [0,0]
 
-    def play(self):
+    def play_CLI(self):
         Player1 = self.Player1
         Player2 = self.Player2
         q_values = self.q_values
@@ -180,4 +180,4 @@ if __name__ == '__main__':
     Player1 = Player('Taras')
     Player2 = Player('Yarema')
     game = Game(Player1, Player2)
-    game.play()
+    game.play_CLI()

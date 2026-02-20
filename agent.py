@@ -3,7 +3,7 @@ import json
 from main import Player, Game
 import time
 
-#<state> format = (p1l, p1r, p2l, p2r, x) where x is either 0 or 1 where 0 represents the current player as player 1
+#<state> format = (p1l, p1r, p2l, p2r, x) where x is either 0 or 1 where 0 represents the current player as player 1 so the bot understands from the q-value states whether it is the first two hands or last two hands
 
 class Agent(Player):
     def __init__(self, name):
@@ -145,7 +145,7 @@ if __name__ == '__main__':
     q_values = load_q_values()
     game = Game(Player1, Player2, q_values)
     for i in range(10000):
-        game.play()
+        game.play_CLI()
     save_q_values(q_values)
     end_time = time.perf_counter()
     print(end_time - start_time)
