@@ -46,7 +46,7 @@ playerLeftBTN.addEventListener("click", () => {
     } else {
         playerLeftBTN.classList.add('selected')
         if (playerRightBTN.classList.contains('selected')) {
-            determineAmount(playerLeftBTN, playerRightBTN)
+            determineAmount(playerRightBTN, playerLeftBTN, 'right')
         } else if (player2RightBTN.classList.contains('selected')) {
             attackMove(playerLeftBTN, player2RightBTN, 'left', 'right')
         } else if (player2LeftBTN.classList.contains('selected')) {
@@ -62,7 +62,7 @@ playerRightBTN.addEventListener("click", () => {
     } else {
         playerRightBTN.classList.add('selected')
         if (playerLeftBTN.classList.contains('selected')) {
-            determineAmount(playerRightBTN, playerLeftBTN)
+            determineAmount(playerLeftBTN, playerRightBTN, 'left')
         } else if (player2RightBTN.classList.contains('selected')) {
             attackMove(playerRightBTN, player2RightBTN, 'right', 'right')
         } else if (player2LeftBTN.classList.contains('selected')) {
@@ -101,6 +101,7 @@ player2RightBTN.addEventListener("click", () => {
 
 //split amount button click listeners
 document.getElementById("button1").addEventListener("click", () => {
+    console.log("BUTTON PERSS")
     amountClick(1)
 })
 document.getElementById("button2").addEventListener("click", () => {
@@ -137,61 +138,91 @@ function attackMove(playerHand, opponentHand, playerSide, opponentSide) {
             opponentHand.querySelector('img').src = data['opponentImgUrl']
             playerHand.classList.remove('selected')
             opponentHand.classList.remove('selected')
+            playerHand.dataset.order = ''
+            opponentHand.dataset.order = ''
+
+            //values after the bots move done before the delay to prevent any bugs the user could cause if they spam before the 2s are up
+            playerLeftBTN.dataset.value = String(data['handsAfter'][0])
+            playerRightBTN.dataset.value = String(data['handsAfter'][1])
+            player2LeftBTN.dataset.value = String(data['handsAfter'][2])
+            player2RightBTN.dataset.value = String(data['handsAfter'][3])
 
             console.log("right before")
             await sleep(2000)
             console.log("2s later")
             console.log(data['botmove'])
-            playerLeftBTN.dataset.value = String(data['handsAfter'][0])
-            playerRightBTN.dataset.value = String(data['handsAfter'][1])
-            player2LeftBTN.dataset.value = String(data['handsAfter'][2])
-            player2RightBTN.dataset.value = String(data['handsAfter'][3])
             playerLeftBTN.querySelector('img').src = data['handsAfterUrl'][0]
             playerRightBTN.querySelector('img').src = data['handsAfterUrl'][1]
             player2LeftBTN.querySelector('img').src = data['handsAfterUrl'][2]
             player2RightBTN.querySelector('img').src = data['handsAfterUrl'][3]
-        } else (
+        } else {
             console.log(data['errorMsg'])
-        )
+        }
     })
 }
 
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms))
-}
-
-function splitMove(hand1, hand2, amount) {
+function splitMove(splitterHand, recipientHand, amount, splitterHandSide) {
     fetch('/perform-move', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
             'move': 'split',
-            'hand1': Number(hand1.dataset.value),
-            'hand2': Number(hand2.dataset.value),
-            'amount': Number(amount)
+            'splitterHand': Number(splitterHand.dataset.value),
+            'recipientHand': Number(recipientHand.dataset.value),
+            'amount': Number(amount),
+            'splitterHandSide': splitterHandSide
         })
     })
     .then(res => res.json())
-    .then(data => {
+    .then(async data => {
         if (data['isSuccessful'] === true) {
-            hand1.dataset.value = string(data['hand1'])
-            hand2.dataset.value = string(data['hand2'])
-            hand1.querySelector('img').src = data['img_url_1']
-            hand2.querySelector('img').src = data['img_url_2']
-        } else (
+            for (let i = 1; i < 5; i++) {
+                document.getElementById(`button${i}`).classList.add('d-none')
+            }
+            splitterHand.classList.remove('selected')
+            recipientHand.classList.remove('selected')
+            splitterHand.dataset.order = ''
+            recipientHand.dataset.order = ''
+
+            splitterHand.dataset.value = String(data['hand1'])
+            recipientHand.dataset.value = String(data['hand2'])
+            splitterHand.querySelector('img').src = data['splitterHandUrl']
+            recipientHand.querySelector('img').src = data['recipientHandUrl']
+
+            playerLeftBTN.dataset.value = String(data['handsAfter'][0])
+            playerRightBTN.dataset.value = String(data['handsAfter'][1])
+            player2LeftBTN.dataset.value = String(data['handsAfter'][2])
+            player2RightBTN.dataset.value = String(data['handsAfter'][3])
+
+            console.log("right before")
+            await sleep(2000)
+            console.log("2s later")
+            console.log(data['botmove'])
+            playerLeftBTN.querySelector('img').src = data['handsAfterUrl'][0]
+            playerRightBTN.querySelector('img').src = data['handsAfterUrl'][1]
+            player2LeftBTN.querySelector('img').src = data['handsAfterUrl'][2]
+            player2RightBTN.querySelector('img').src = data['handsAfterUrl'][3]
+        } else {
             console.log(data['error-msg'])
-        )
+        }
     })
 }
 
-function determineAmount(hand1, hand2) {
+function determineAmount(splitterHand, recipientHand, splitterHandSide) {
+    console.log({
+            'move': 'determineAmount',
+            'splitterHand': Number(splitterHand.dataset.value),
+            'recipientHand': Number(recipientHand.dataset.value),
+            'splitterHandSide': splitterHandSide
+        })
     fetch('/perform-move', {
         method:'POST',
         headers:{'Content-Type': 'Application/json'},
         body: JSON.stringify({
             'move': 'determineAmount',
-            'hand1': Number(hand1.dataset.value),
-            'hand2': Number(hand2.dataset.value)
+            'splitterHand': Number(splitterHand.dataset.value),
+            'recipientHand': Number(recipientHand.dataset.value),
+            'splitterHandSide': splitterHandSide
         })
     })
     .then(res => res.json())
@@ -203,10 +234,11 @@ function determineAmount(hand1, hand2) {
 }
 
 function amountClick(amount) {
-    if (playerLeftBTN.dataset.first === 'first') {
-        splitMove(playerLeftBTN, playerRightBTN, amount)
-    } else if (playerRightBTN.dataset.first === 'first') {
-        splitMove(playerRightBTN, playerLeftBTN, amount)
+    console.log(playerLeftBTN.dataset.order, playerRightBTN.dataset.order)
+    if (playerLeftBTN.dataset.order === '1') {
+        splitMove(playerRightBTN, playerLeftBTN, amount, 'right')
+    } else if (playerRightBTN.dataset.order === '1') {
+        splitMove(playerLeftBTN, playerRightBTN, amount, 'left')
     }
 }
 
@@ -225,6 +257,7 @@ function updateOrder(handBtn) {
             player2RightBTN.dataset.order = String(Number(player2RightBTN.dataset.order) + 1)
         }
         handBtn.dataset.order = '1'
+        console.log("set to first")
     } else {
         if (playerLeftBTN.dataset.order != '' && playerLeftBTN.dataset.order != '1' && Number(playerLeftBTN.dataset.order) > Number(handBtn.dataset.order)) {
             playerLeftBTN.dataset.order = String(Number(playerLeftBTN.dataset.order) - 1)
@@ -260,6 +293,9 @@ function updateOrder(handBtn) {
     console.log('after', playerLeftBTN.dataset.order, 'pl', playerRightBTN.dataset.order, 'pr', player2LeftBTN.dataset.order, 'ol', player2RightBTN.dataset.order, 'or')
 }
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms))
+}
 
 
 </script>

@@ -47,9 +47,8 @@ def perform_move():
     global Player2
     global q_values
 
-
     data = request.get_json()
-    print(data['move'])
+
     if data['move'] == 'attack':
         if data['playerSide'] == 'left':
             attacker_hand = Player1.left
@@ -80,22 +79,94 @@ def perform_move():
                 'playerHand': attacker_hand.get_value(),
                 'opponentHand': recipient_hand.get_value(),
                 'opponentImgUrl': img_url,
-                'errorMsg': 'Something went wrong',
                 'handsAfter': [Player1.left.get_value(), Player1.right.get_value(), Player2.left.get_value(), Player2.right.get_value()],
                 'gameState': game_state,
                 'handsAfterUrl': [f"/static/img/left_{Player1.left.get_value()}.png", f"/static/img/right_{Player1.right.get_value()}.png", f"/static/img/left_{Player2.left.get_value()}.png", f"/static/img/right_{Player2.right.get_value()}.png"]
             })
+        else:
+            output = jsonify({
+                'isSuccessful': False,
+                'errorMsg': 'something went wrong'
+            })
 
     elif data['move'] == 'split':
-        pass
-    elif data['move'] == 'deterimneAmount':
-        pass
+        print("+++++++++++++++++")
+        if data['splitterHandSide'] == 'left':
+            splitter_hand = Player1.left
+            recipient_hand = Player1.right
+            recipient_hand_side = 'right'
+        elif data['splitterHandSide'] == 'right':
+            splitter_hand = Player1.right
+            recipient_hand = Player1.left
+            recipient_hand_side = 'left'
+        
+        result = Player1.split(data['amount'], splitter_hand, recipient_hand)
+        if result == True:
+            splitter_hand_url = f"/static/img/{data['splitterHandSide']}_{splitter_hand.get_value()}.png"
+            recipient_hand_url = f"/static/img/{recipient_hand_side}_{recipient_hand.get_value()}.png"
+            if Player1.left.get_value() + Player1.right.get_value() == 0:
+                game_state = 'player lost'
+            elif Player2.left.get_value() + Player2.right.get_value() == 0:
+                game_state = 'player won'
+            else:
+                game_state = 'continuing'
+                Player2.make_move((Player1.left.get_value(), Player1.right.get_value(), Player2.left.get_value(), Player2.right.get_value(), 1), q_values, Player1) #assuming that the bot is always 2nd to play
+                if Player1.left.get_value() + Player1.right.get_value() == 0:
+                    game_state = 'player lost bot'
+                elif Player2.left.get_value() + Player2.right.get_value() == 0:
+                    game_state = 'player won bot'
+
+            output = jsonify({
+                'isSuccessful': True,
+                'splitterHand': splitter_hand.get_value(),
+                'recipientHand': recipient_hand.get_value(),
+                'splitterHandUrl': splitter_hand_url,
+                'recipientHandUrl': recipient_hand_url,
+                'handsAfter': [Player1.left.get_value(), Player1.right.get_value(), Player2.left.get_value(), Player2.right.get_value()],
+                'gameState': game_state,
+                'handsAfterUrl': [f"/static/img/left_{Player1.left.get_value()}.png", f"/static/img/right_{Player1.right.get_value()}.png", f"/static/img/left_{Player2.left.get_value()}.png", f"/static/img/right_{Player2.right.get_value()}.png"]
+            })
+        else:
+            output = jsonify({
+                'isSuccessful': False,
+                'errorMsg': 'something went wrong'
+            })
+
+    elif data['move'] == 'determineAmount':
+        if data['splitterHandSide'] == 'left':
+            splitter_hand = Player1.left
+            recipient_hand = Player1.right
+        elif data['splitterHandSide'] == 'right':
+            splitter_hand = Player1.right
+            recipient_hand = Player1.left
+        if data['splitterHand'] == splitter_hand.get_value():
+            if data['recipientHand'] == recipient_hand.get_value():
+                temp = Agent('temp')
+                valid_moves = temp.get_valid_moves((splitter_hand.get_value(), recipient_hand.get_value(), Player2.left.get_value(), Player2.right.get_value(), 0))
+                valid_splits = []
+                for i in range(len(valid_moves)):
+                    if valid_moves[i][0] == 's':
+                        valid_splits.append(valid_moves[i][2])
+                print("--------------------------------------", valid_splits)
+                output = jsonify({
+                    'isSuccessful': True,
+                    'buttons': valid_splits
+
+                })
+            else:
+                output = jsonify({
+                    'isSuccessful': False,
+                    'errorMsg': 'something went wrong'
+                })
+        else:
+            output = jsonify({
+                'isSuccessful': False,
+                'errorMsg': 'something went wrong'
+            })
 
 
     return output
 
-def get_url(p1l, p1r, p2l, p2r):
-    return 
 
 if __name__ == '__main__':
     app.run(debug=True)

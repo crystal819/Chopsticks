@@ -10,7 +10,7 @@ class Agent(Player):
         super().__init__(name=name)
 
     def make_move(self, state, q_values, opponent):
-        epsilon = 0.9 #exploration rate
+        epsilon = 0.1 #exploration rate the higher the more random, the lower the more skill
         highest_action = self.max_Q(state, q_values)[1]
 
         
