@@ -55,8 +55,8 @@ def play_against_player():
 
 
 
-@app.route('/perform-move', methods=['POST'])
-def perform_move():
+@app.route('/perform-move-bot', methods=['POST'])
+def perform_move_bot():
     global Player1
     global Player2
     global q_values
@@ -189,6 +189,12 @@ def perform_move():
 
 
     return output
+
+
+
+@app.route('/perform-move-player', methods=['POST'])
+def perform_move_player():
+    pass
 
 
 if __name__ == '__main__':

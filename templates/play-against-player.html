@@ -7,23 +7,26 @@
 
 <section style="height: 100px;"></section>
 
-<div id="player2-name" class="d-flex align-items-center justify-content-center"><h3>Player 2</h3></div>
+<div class="d-flex align-items-center justify-content-center"><h3 id="player2-name">Player 2</h3></div>
 <div class="row">
     <div class="d-flex align-items-center justify-content-center">
-        <button id="player2-left-btn" class="col-md-5" data-value="{{ game_data['player2l'] }}" data-order=""><img class="not-current-player player-img" src="{{ url_for('static', filename='img/left_1.png')}}"></button>
+        <button id="player-left-btn" class="col-md-5 player-btn d-none" data-value="{{ game_data['player1l'] }}" data-order=""><img class="player-img" src="{{ url_for('static', filename='img/left_1.png')}}"></button>
+        <button id="player2-left-btn" class="col-md-5 player-btn" data-value="{{ game_data['player2l'] }}" data-order=""><img class="not-current-player player-img" src="{{ url_for('static', filename='img/left_1.png')}}"></button>
         <section class="col-md-1"></section>
-        <button id="player2-right-btn" class="col-md-6" data-value="{{ game_data['player2r'] }}" data-order=""><img class="not-current-player player-img" src="{{ url_for('static', filename='img/right_1.png')}}"></button>
+        <button id="player-right-btn" class="col-md-6 player-btn d-none" data-value="{{ game_data['player1r'] }}" data-order=""><img class="player-img" src="{{ url_for('static', filename='img/right_1.png')}}"></button>
+        <button id="player2-right-btn" class="col-md-6 player-btn" data-value="{{ game_data['player2r'] }}" data-order=""><img class="not-current-player player-img" src="{{ url_for('static', filename='img/right_1.png')}}"></button>
     </div>
 </div>
 <section style="height:200px;"></section>
 
 <div class="row">
     <div class="d-flex align-items-center justify-content-center">
-        <button id="player-left-btn" class="col-md-5" data-value="{{ game_data['player1l'] }}" data-order=""><img class="player-img" src="{{ url_for('static', filename='img/left_1.png')}}"></button>
-        <button id="player2-left-btn-bottom" class="col-md-5 d-none" data-value="{{ game_data['player2l'] }}" data-order=""><img class="not-current-player player-img" src="{{ url_for('static', filename='img/left_1.png')}}"></button>
+        <button id="player-left-btn-bottom" class="col-md-5 player-btn" data-value="{{ game_data['player1l'] }}" data-order=""><img class="player-img" src="{{ url_for('static', filename='img/left_1.png')}}"></button>
+        <button id="player2-left-btn-bottom" class="col-md-5 player-btn d-none" data-value="{{ game_data['player2l'] }}" data-order=""><img class="not-current-player player-img" src="{{ url_for('static', filename='img/left_1.png')}}"></button>
         <section class="col-md-1">
         </section>
-        <button id="player-right-btn" class="col-md-6" data-value="{{ game_data['player1r'] }}" data-order=""><img class="player-img" src="{{ url_for('static', filename='img/right_1.png')}}"></button>
+        <button id="player-right-btn-bottom" class="col-md-6 player-btn" data-value="{{ game_data['player1r'] }}" data-order=""><img class="player-img" src="{{ url_for('static', filename='img/right_1.png')}}"></button>
+        <button id="player2-right-btn-bottom" class="col-md-6 player-btn d-none" data-value="{{ game_data['player2r'] }}" data-order=""><img class="not-current-player player-img" src="{{ url_for('static', filename='img/right_1.png')}}"></button>
     </div>
 </div>
 <section style="height: 20px;"></section>
@@ -35,12 +38,14 @@
         <button id="button4" class="d-none">split 4</button>
     </div>
 </div>
-<div id="player1-name" class="d-flex align-items-center justify-content-center"><h3>{{ name }}</h3></div>
+<div class="d-flex align-items-center justify-content-center"><h3 id="player1-name" >{{ name }}</h3></div>
 
 <script>
+let currentPlayer = 'player1'
 //hand button click listeners
-const playerLeftBTN = document.getElementById("player-left-btn")
+let playerLeftBTN = document.getElementById("player-left-btn-bottom")
 playerLeftBTN.addEventListener("click", () => {
+    switchPlayerHands()
     updateOrder(playerLeftBTN)
     if (playerLeftBTN.classList.contains('selected')) {
         playerLeftBTN.classList.remove('selected')
@@ -55,7 +60,7 @@ playerLeftBTN.addEventListener("click", () => {
         }
     }
 })
-const playerRightBTN = document.getElementById("player-right-btn")
+let playerRightBTN = document.getElementById("player-right-btn-bottom")
 playerRightBTN.addEventListener("click", () => {
     updateOrder(playerRightBTN)
     if (playerRightBTN.classList.contains('selected')) {
@@ -71,7 +76,7 @@ playerRightBTN.addEventListener("click", () => {
         }
     }
 })
-const player2LeftBTN = document.getElementById("player2-left-btn")
+let player2LeftBTN = document.getElementById("player2-left-btn")
 player2LeftBTN.addEventListener("click", () => {
     updateOrder(player2LeftBTN)
     if (player2LeftBTN.classList.contains('selected')) {
@@ -85,7 +90,7 @@ player2LeftBTN.addEventListener("click", () => {
         }
     }
 })
-const player2RightBTN = document.getElementById("player2-right-btn")
+let player2RightBTN = document.getElementById("player2-right-btn")
 player2RightBTN.addEventListener("click", () => {
     updateOrder(player2RightBTN)
     if (player2RightBTN.classList.contains('selected')) {
@@ -102,7 +107,6 @@ player2RightBTN.addEventListener("click", () => {
 
 //split amount button click listeners
 document.getElementById("button1").addEventListener("click", () => {
-    console.log("BUTTON PERSS")
     amountClick(1)
 })
 document.getElementById("button2").addEventListener("click", () => {
@@ -297,6 +301,55 @@ function updateOrder(handBtn) {
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms))
 }
+
+function switchPlayerHands() {
+    if (currentPlayer = 'player2') { //sets back to original - player 1 on the bottom
+        currentPlayer = 'player1'
+        let temp = document.getElementById('player2-name').textContent
+        document.getElementById('player2-name').textContent = document.getElementById('player1-name').textContent
+        document.getElementById('player1-name').textContent = temp
+
+        playerLeftBTN.classList.add('d-none')
+        playerRightBTN.classList.add('d-none')
+        player2LeftBTN.classList.add('d-none')
+        player2RightBTN.classList.add('d-none')
+
+
+        playerLeftBTN = document.getElementById("player-left-btn-bottom")
+        playerRightBTN = document.getElementById("player-right-btn-bottom")
+        player2LeftBTN = document.getElementById("player2-left-btn")
+        player2RightBTN = document.getElementById("player2-right-btn")
+
+        playerLeftBTN.classList.remove('d-none')
+        playerRightBTN.classList.remove('d-none')
+        player2LeftBTN.classList.remove('d-none')
+        player2RightBTN.classList.remove('d-none')
+
+    } else { //sets to player 2 on the bottom
+        currentPlayer = 'player2'
+        let temp = document.getElementById('player2-name').textContent
+        document.getElementById('player2-name').textContent = document.getElementById('player1-name').textContent
+        document.getElementById('player1-name').textContent = temp
+
+        playerLeftBTN.classList.add('d-none')
+        playerRightBTN.classList.add('d-none')
+        player2LeftBTN.classList.add('d-none')
+        player2RightBTN.classList.add('d-none')
+
+        playerLeftBTN = document.getElementById("player-left-btn")
+        playerRightBTN = document.getElementById("player-right-btn")
+        player2LeftBTN = document.getElementById("player2-left-btn-bottom")
+        player2RightBTN = document.getElementById("player2-right-btn-bottom")
+
+        playerLeftBTN.classList.remove('d-none')
+        playerRightBTN.classList.remove('d-none')
+        player2LeftBTN.classList.remove('d-none')
+        player2RightBTN.classList.remove('d-none')
+    }
+
+
+}
+
 
 
 </script>

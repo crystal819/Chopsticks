@@ -101,7 +101,6 @@ player2RightBTN.addEventListener("click", () => {
 
 //split amount button click listeners
 document.getElementById("button1").addEventListener("click", () => {
-    console.log("BUTTON PERSS")
     amountClick(1)
 })
 document.getElementById("button2").addEventListener("click", () => {
@@ -119,7 +118,7 @@ document.getElementById("button4").addEventListener("click", () => {
 
 
 function attackMove(playerHand, opponentHand, playerSide, opponentSide) {
-    fetch('/perform-move', {
+    fetch('/perform-move-bot', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
@@ -163,7 +162,7 @@ function attackMove(playerHand, opponentHand, playerSide, opponentSide) {
 }
 
 function splitMove(splitterHand, recipientHand, amount, splitterHandSide) {
-    fetch('/perform-move', {
+    fetch('/perform-move-bot', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
@@ -218,7 +217,7 @@ function determineAmount(splitterHand, recipientHand, splitterHandSide) {
             'recipientHand': Number(recipientHand.dataset.value),
             'splitterHandSide': splitterHandSide
         })
-    fetch('/perform-move', {
+    fetch('/perform-move-bot', {
         method:'POST',
         headers:{'Content-Type': 'Application/json'},
         body: JSON.stringify({
