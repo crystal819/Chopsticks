@@ -8,63 +8,26 @@
     width: auto;
 }
 /*-----------------------------------------------*/
-#player2-left-btn {
-    width: 150px;
-    background-color: transparent;
-    border-color: transparent;
-}
-#player2-right-btn {
-    width: 150px;
-    background-color: transparent;
-    border-color: transparent;
-}
-#player-left-btn {
-    width: 150px;
-    background-color: transparent;
-    border-color: transparent;
-}
-#player-right-btn {
+.player-btn {
     width: 150px;
     background-color: transparent;
     border-color: transparent;
 }
 
-#player2-left-btn:hover {
-    transform: scale(0.95);
+.player-btn:hover {
+    transform: scale((0.95));
 }
-#player2-left-btn:active {
-    transform: scale(0.90);
-}
-#player2-right-btn:hover {
-    transform: scale(0.95);
-}
-#player2-right-btn:active {
+
+.player-btn:active {
     transform: scale(0.90);
 }
 
-#player-left-btn:hover {
-    transform: scale(0.95);
-}
-#player-left-btn:active {
-    transform: scale(0.90);
-}
-#player-right-btn:hover {
-    transform: scale(0.95);
-}
-#player-right-btn:active {
-    transform: scale(0.90);
+.player-btn.selected {
+    background-color: #b3e5db;
 }
 
-#player2-left-btn.selected {
-    background-color: #b3e5db;
-}
-#player2-right-btn.selected {
-    background-color: #b3e5db;
-}
-#player-left-btn.selected {
-    background-color: #b3e5db;
-}
-#player-right-btn.selected {
-    background-color: #b3e5db;
-}
 /*----------------------------------------------------------------*/
+
+.not-current-player {
+    transform: scaleY(-1);
+}

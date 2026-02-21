@@ -10,19 +10,19 @@
 <div class="d-flex align-items-center justify-content-center"><h3>Bot</h3></div>
 <div class="row">
     <div class="d-flex align-items-center justify-content-center">
-        <button id="player2-left-btn" class="col-md-5" data-value="{{ game_data['player2l'] }}" data-order=""><img class="player2-img" src="{{ url_for('static', filename='img/left_1.png')}}"></button>
+        <button id="player2-left-btn" class="col-md-5 player-btn" data-value="{{ game_data['player2l'] }}" data-order=""><img class="player2-img" src="{{ url_for('static', filename='img/left_1.png')}}"></button>
         <section class="col-md-1"></section>
-        <button id="player2-right-btn" class="col-md-6" data-value="{{ game_data['player2r'] }}" data-order=""><img class="player2-img" src="{{ url_for('static', filename='img/right_1.png')}}"></button>
+        <button id="player2-right-btn" class="col-md-6 player-btn" data-value="{{ game_data['player2r'] }}" data-order=""><img class="player2-img" src="{{ url_for('static', filename='img/right_1.png')}}"></button>
     </div>
 </div>
 <section style="height:200px;"></section>
 
 <div class="row">
     <div class="d-flex align-items-center justify-content-center">
-        <button id="player-left-btn" class="col-md-5" data-value="{{ game_data['player1l'] }}" data-order=""><img class="player-img" src="{{ url_for('static', filename='img/left_1.png')}}"></button>
+        <button id="player-left-btn" class="col-md-5 player-btn" data-value="{{ game_data['player1l'] }}" data-order=""><img class="player-img" src="{{ url_for('static', filename='img/left_1.png')}}"></button>
         <section class="col-md-1">
         </section>
-        <button id="player-right-btn" class="col-md-6" data-value="{{ game_data['player1r'] }}" data-order=""><img class="player-img" src="{{ url_for('static', filename='img/right_1.png')}}"></button>
+        <button id="player-right-btn" class="col-md-6 player-btn" data-value="{{ game_data['player1r'] }}" data-order=""><img class="player-img" src="{{ url_for('static', filename='img/right_1.png')}}"></button>
     </div>
 </div>
 <section style="height: 20px;"></section>
@@ -134,6 +134,7 @@ function attackMove(playerHand, opponentHand, playerSide, opponentSide) {
     .then(async data => {
         console.log("attack recieved")
         if (data['isSuccessful'] === true) {
+            disableButtons()
             opponentHand.dataset.value = String(data['hand2'])
             opponentHand.querySelector('img').src = data['opponentImgUrl']
             playerHand.classList.remove('selected')
@@ -141,20 +142,20 @@ function attackMove(playerHand, opponentHand, playerSide, opponentSide) {
             playerHand.dataset.order = ''
             opponentHand.dataset.order = ''
 
-            //values after the bots move done before the delay to prevent any bugs the user could cause if they spam before the 2s are up
+            console.log(data['gameStateBefore'])
+            await sleep(2000)
+            console.log(data['gameStateAfter'])
+
             playerLeftBTN.dataset.value = String(data['handsAfter'][0])
             playerRightBTN.dataset.value = String(data['handsAfter'][1])
             player2LeftBTN.dataset.value = String(data['handsAfter'][2])
             player2RightBTN.dataset.value = String(data['handsAfter'][3])
-
-            console.log("right before")
-            await sleep(2000)
-            console.log("2s later")
-            console.log(data['botmove'])
             playerLeftBTN.querySelector('img').src = data['handsAfterUrl'][0]
             playerRightBTN.querySelector('img').src = data['handsAfterUrl'][1]
             player2LeftBTN.querySelector('img').src = data['handsAfterUrl'][2]
             player2RightBTN.querySelector('img').src = data['handsAfterUrl'][3]
+            
+            enableButtons()
         } else {
             console.log(data['errorMsg'])
         }
@@ -179,29 +180,31 @@ function splitMove(splitterHand, recipientHand, amount, splitterHandSide) {
             for (let i = 1; i < 5; i++) {
                 document.getElementById(`button${i}`).classList.add('d-none')
             }
+            disableButtons()
+
             splitterHand.classList.remove('selected')
             recipientHand.classList.remove('selected')
             splitterHand.dataset.order = ''
             recipientHand.dataset.order = ''
-
             splitterHand.dataset.value = String(data['hand1'])
             recipientHand.dataset.value = String(data['hand2'])
             splitterHand.querySelector('img').src = data['splitterHandUrl']
             recipientHand.querySelector('img').src = data['recipientHandUrl']
 
+            console.log(data['gameStateBefore'])
+            await sleep(2000)
+            console.log(data['gameStateAfter'])
+
             playerLeftBTN.dataset.value = String(data['handsAfter'][0])
             playerRightBTN.dataset.value = String(data['handsAfter'][1])
             player2LeftBTN.dataset.value = String(data['handsAfter'][2])
             player2RightBTN.dataset.value = String(data['handsAfter'][3])
-
-            console.log("right before")
-            await sleep(2000)
-            console.log("2s later")
-            console.log(data['botmove'])
             playerLeftBTN.querySelector('img').src = data['handsAfterUrl'][0]
             playerRightBTN.querySelector('img').src = data['handsAfterUrl'][1]
             player2LeftBTN.querySelector('img').src = data['handsAfterUrl'][2]
             player2RightBTN.querySelector('img').src = data['handsAfterUrl'][3]
+
+            enableButtons()
         } else {
             console.log(data['error-msg'])
         }
@@ -297,7 +300,19 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms))
 }
 
+function disableButtons() {
+    playerLeftBTN.disabled = true
+    playerRightBTN.disabled = true
+    player2LeftBTN.disabled = true
+    player2RightBTN.disabled = true
+}
 
+function enableButtons() {
+    playerLeftBTN.disabled = false
+    playerRightBTN.disabled = false
+    player2LeftBTN.disabled = false
+    player2RightBTN.disabled = false
+}
 </script>
 
 {% endblock %}

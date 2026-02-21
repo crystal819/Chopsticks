@@ -1,6 +1,306 @@
 {% extends 'base.html' %}
 {% block content %}
 
+<div class="d-flex center-align-items justify-content-center">
+    <h4>-against a bot</h4>
+</div>
+
+<section style="height: 100px;"></section>
+
+<div id="player2-name" class="d-flex align-items-center justify-content-center"><h3>Player 2</h3></div>
+<div class="row">
+    <div class="d-flex align-items-center justify-content-center">
+        <button id="player2-left-btn" class="col-md-5" data-value="{{ game_data['player2l'] }}" data-order=""><img class="not-current-player player-img" src="{{ url_for('static', filename='img/left_1.png')}}"></button>
+        <section class="col-md-1"></section>
+        <button id="player2-right-btn" class="col-md-6" data-value="{{ game_data['player2r'] }}" data-order=""><img class="not-current-player player-img" src="{{ url_for('static', filename='img/right_1.png')}}"></button>
+    </div>
+</div>
+<section style="height:200px;"></section>
+
+<div class="row">
+    <div class="d-flex align-items-center justify-content-center">
+        <button id="player-left-btn" class="col-md-5" data-value="{{ game_data['player1l'] }}" data-order=""><img class="player-img" src="{{ url_for('static', filename='img/left_1.png')}}"></button>
+        <button id="player2-left-btn-bottom" class="col-md-5 d-none" data-value="{{ game_data['player2l'] }}" data-order=""><img class="not-current-player player-img" src="{{ url_for('static', filename='img/left_1.png')}}"></button>
+        <section class="col-md-1">
+        </section>
+        <button id="player-right-btn" class="col-md-6" data-value="{{ game_data['player1r'] }}" data-order=""><img class="player-img" src="{{ url_for('static', filename='img/right_1.png')}}"></button>
+    </div>
+</div>
+<section style="height: 20px;"></section>
+<div class="row">
+    <div class="col-md-12 d-flex align-items-center justify-content-center">
+        <button id="button1" class="d-none">split 1</button>
+        <button id="button2" class="d-none">split 2</button>
+        <button id="button3" class="d-none">split 3</button>
+        <button id="button4" class="d-none">split 4</button>
+    </div>
+</div>
+<div id="player1-name" class="d-flex align-items-center justify-content-center"><h3>{{ name }}</h3></div>
+
+<script>
+//hand button click listeners
+const playerLeftBTN = document.getElementById("player-left-btn")
+playerLeftBTN.addEventListener("click", () => {
+    updateOrder(playerLeftBTN)
+    if (playerLeftBTN.classList.contains('selected')) {
+        playerLeftBTN.classList.remove('selected')
+    } else {
+        playerLeftBTN.classList.add('selected')
+        if (playerRightBTN.classList.contains('selected')) {
+            determineAmount(playerRightBTN, playerLeftBTN, 'right')
+        } else if (player2RightBTN.classList.contains('selected')) {
+            attackMove(playerLeftBTN, player2RightBTN, 'left', 'right')
+        } else if (player2LeftBTN.classList.contains('selected')) {
+            attackMove(playerLeftBTN, player2LeftBTN, 'left', 'left')
+        }
+    }
+})
+const playerRightBTN = document.getElementById("player-right-btn")
+playerRightBTN.addEventListener("click", () => {
+    updateOrder(playerRightBTN)
+    if (playerRightBTN.classList.contains('selected')) {
+        playerRightBTN.classList.remove('selected')
+    } else {
+        playerRightBTN.classList.add('selected')
+        if (playerLeftBTN.classList.contains('selected')) {
+            determineAmount(playerLeftBTN, playerRightBTN, 'left')
+        } else if (player2RightBTN.classList.contains('selected')) {
+            attackMove(playerRightBTN, player2RightBTN, 'right', 'right')
+        } else if (player2LeftBTN.classList.contains('selected')) {
+            attackMove(playerRightBTN, player2LeftBTN, 'right', 'left')
+        }
+    }
+})
+const player2LeftBTN = document.getElementById("player2-left-btn")
+player2LeftBTN.addEventListener("click", () => {
+    updateOrder(player2LeftBTN)
+    if (player2LeftBTN.classList.contains('selected')) {
+        player2LeftBTN.classList.remove('selected')
+    } else {
+        player2LeftBTN.classList.add('selected')
+        if (playerRightBTN.classList.contains('selected')) {
+            attackMove(playerRightBTN, player2LeftBTN, 'right', 'left')
+        } else if (playerLeftBTN.classList.contains('selected')) {
+            attackMove(playerLeftBTN, player2LeftBTN, 'left', 'left')
+        }
+    }
+})
+const player2RightBTN = document.getElementById("player2-right-btn")
+player2RightBTN.addEventListener("click", () => {
+    updateOrder(player2RightBTN)
+    if (player2RightBTN.classList.contains('selected')) {
+        player2RightBTN.classList.remove('selected')
+    } else {
+        player2RightBTN.classList.add('selected')
+        if (playerRightBTN.classList.contains('selected')) {
+            attackMove(playerRightBTN, player2RightBTN, 'right', 'right')
+        } else if (playerLeftBTN.classList.contains('selected')) {
+            attackMove(playerLeftBTN, player2RightBTN, 'left', 'right')
+        }
+    }
+})
+
+//split amount button click listeners
+document.getElementById("button1").addEventListener("click", () => {
+    console.log("BUTTON PERSS")
+    amountClick(1)
+})
+document.getElementById("button2").addEventListener("click", () => {
+    amountClick(2)
+})
+document.getElementById("button3").addEventListener("click", () => {
+    amountClick(3)
+})
+document.getElementById("button4").addEventListener("click", () => {
+    amountClick(4)
+})
+
+
+
+
+
+function attackMove(playerHand, opponentHand, playerSide, opponentSide) {
+    fetch('/perform-move', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            'move': 'attack',
+            'playerHand': Number(playerHand.dataset.value),
+            'opponentHand': Number(opponentHand.dataset.value),
+            'playerSide': playerSide,
+            'opponentSide': opponentSide
+        })
+    })
+    .then(res => res.json())
+    .then(async data => {
+        console.log("attack recieved")
+        if (data['isSuccessful'] === true) {
+            opponentHand.dataset.value = String(data['hand2'])
+            opponentHand.querySelector('img').src = data['opponentImgUrl']
+            playerHand.classList.remove('selected')
+            opponentHand.classList.remove('selected')
+            playerHand.dataset.order = ''
+            opponentHand.dataset.order = ''
+
+            //values after the bots move done before the delay to prevent any bugs the user could cause if they spam before the 2s are up
+            playerLeftBTN.dataset.value = String(data['handsAfter'][0])
+            playerRightBTN.dataset.value = String(data['handsAfter'][1])
+            player2LeftBTN.dataset.value = String(data['handsAfter'][2])
+            player2RightBTN.dataset.value = String(data['handsAfter'][3])
+
+            console.log("right before")
+            await sleep(2000)
+            console.log("2s later")
+            console.log(data['botmove'])
+            playerLeftBTN.querySelector('img').src = data['handsAfterUrl'][0]
+            playerRightBTN.querySelector('img').src = data['handsAfterUrl'][1]
+            player2LeftBTN.querySelector('img').src = data['handsAfterUrl'][2]
+            player2RightBTN.querySelector('img').src = data['handsAfterUrl'][3]
+        } else {
+            console.log(data['errorMsg'])
+        }
+    })
+}
+
+function splitMove(splitterHand, recipientHand, amount, splitterHandSide) {
+    fetch('/perform-move', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            'move': 'split',
+            'splitterHand': Number(splitterHand.dataset.value),
+            'recipientHand': Number(recipientHand.dataset.value),
+            'amount': Number(amount),
+            'splitterHandSide': splitterHandSide
+        })
+    })
+    .then(res => res.json())
+    .then(async data => {
+        if (data['isSuccessful'] === true) {
+            for (let i = 1; i < 5; i++) {
+                document.getElementById(`button${i}`).classList.add('d-none')
+            }
+            splitterHand.classList.remove('selected')
+            recipientHand.classList.remove('selected')
+            splitterHand.dataset.order = ''
+            recipientHand.dataset.order = ''
+
+            splitterHand.dataset.value = String(data['hand1'])
+            recipientHand.dataset.value = String(data['hand2'])
+            splitterHand.querySelector('img').src = data['splitterHandUrl']
+            recipientHand.querySelector('img').src = data['recipientHandUrl']
+
+            playerLeftBTN.dataset.value = String(data['handsAfter'][0])
+            playerRightBTN.dataset.value = String(data['handsAfter'][1])
+            player2LeftBTN.dataset.value = String(data['handsAfter'][2])
+            player2RightBTN.dataset.value = String(data['handsAfter'][3])
+
+            console.log("right before")
+            await sleep(2000)
+            console.log("2s later")
+            console.log(data['botmove'])
+            playerLeftBTN.querySelector('img').src = data['handsAfterUrl'][0]
+            playerRightBTN.querySelector('img').src = data['handsAfterUrl'][1]
+            player2LeftBTN.querySelector('img').src = data['handsAfterUrl'][2]
+            player2RightBTN.querySelector('img').src = data['handsAfterUrl'][3]
+        } else {
+            console.log(data['error-msg'])
+        }
+    })
+}
+
+function determineAmount(splitterHand, recipientHand, splitterHandSide) {
+    console.log({
+            'move': 'determineAmount',
+            'splitterHand': Number(splitterHand.dataset.value),
+            'recipientHand': Number(recipientHand.dataset.value),
+            'splitterHandSide': splitterHandSide
+        })
+    fetch('/perform-move', {
+        method:'POST',
+        headers:{'Content-Type': 'Application/json'},
+        body: JSON.stringify({
+            'move': 'determineAmount',
+            'splitterHand': Number(splitterHand.dataset.value),
+            'recipientHand': Number(recipientHand.dataset.value),
+            'splitterHandSide': splitterHandSide
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        for (let i = 0; i < data['buttons'].length; i++) {
+                document.getElementById(`button${data['buttons'][i]}`).classList.remove('d-none')
+        }
+    })
+}
+
+function amountClick(amount) {
+    console.log(playerLeftBTN.dataset.order, playerRightBTN.dataset.order)
+    if (playerLeftBTN.dataset.order === '1') {
+        splitMove(playerRightBTN, playerLeftBTN, amount, 'right')
+    } else if (playerRightBTN.dataset.order === '1') {
+        splitMove(playerLeftBTN, playerRightBTN, amount, 'left')
+    }
+}
+
+function updateOrder(handBtn) {
+    if (handBtn.dataset.order === '') {
+        if (playerLeftBTN.dataset.order != '' && playerLeftBTN.dataset.order != '4') {
+            playerLeftBTN.dataset.order = String(Number(playerLeftBTN.dataset.order) + 1)
+        }
+        if (playerRightBTN.dataset.order != '' && playerRightBTN.dataset.order != '4') {
+            playerRightBTN.dataset.order = String(Number(playerRightBTN.dataset.order) + 1)
+        }
+        if (player2LeftBTN.dataset.order != '' && player2LeftBTN.dataset.order != '4') {
+            player2LeftBTN.dataset.order = String(Number(player2LeftBTN.dataset.order) + 1)
+        }
+        if (player2RightBTN.dataset.order != '' && player2RightBTN.dataset.order != '4') {
+            player2RightBTN.dataset.order = String(Number(player2RightBTN.dataset.order) + 1)
+        }
+        handBtn.dataset.order = '1'
+        console.log("set to first")
+    } else {
+        if (playerLeftBTN.dataset.order != '' && playerLeftBTN.dataset.order != '1' && Number(playerLeftBTN.dataset.order) > Number(handBtn.dataset.order)) {
+            playerLeftBTN.dataset.order = String(Number(playerLeftBTN.dataset.order) - 1)
+        }
+        if (playerRightBTN.dataset.order != '' && playerRightBTN.dataset.order != '1' && Number(playerRightBTN.dataset.order) > Number(handBtn.dataset.order)) {
+            playerRightBTN.dataset.order = String(Number(playerRightBTN.dataset.order) - 1)
+        }
+        if (player2LeftBTN.dataset.order != '' && player2LeftBTN.dataset.order != '1' && Number(player2LeftBTN.dataset.order) > Number(handBtn.dataset.order)) {
+            player2LeftBTN.dataset.order = String(Number(player2LeftBTN.dataset.order) - 1)
+        }
+        if (player2RightBTN.dataset.order != '' && player2RightBTN.dataset.order != '1' && Number(player2RightBTN.dataset.order) > Number(handBtn.dataset.order)) {
+            player2RightBTN.dataset.order = String(Number(player2RightBTN.dataset.order) - 1)
+        }
+        handBtn.dataset.order = ''
+        console.log("set to null")
+    }
+    if (playerLeftBTN.dataset.order > 2) {
+        playerLeftBTN.dataset.order = ''
+        playerLeftBTN.classList.remove('selected')
+    }
+    if (playerRightBTN.dataset.order > 2) {
+        playerRightBTN.dataset.order = ''
+        playerRightBTN.classList.remove('selected')
+    }
+    if (player2LeftBTN.dataset.order > 2) {
+        player2LeftBTN.dataset.order = ''
+        player2LeftBTN.classList.remove('selected')
+    }
+    if (player2RightBTN.dataset.order > 2) {
+        player2RightBTN.dataset.order = ''
+        player2RightBTN.classList.remove('selected')
+    }
+    console.log('after', playerLeftBTN.dataset.order, 'pl', playerRightBTN.dataset.order, 'pr', player2LeftBTN.dataset.order, 'ol', player2RightBTN.dataset.order, 'or')
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+
+</script>
+
 
 
 
