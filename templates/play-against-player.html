@@ -10,11 +10,11 @@
 <div class="d-flex align-items-center justify-content-center"><h3 id="player2-name">Player 2</h3></div>
 <div class="row">
     <div class="d-flex align-items-center justify-content-center">
-        <button id="player-left-btn" class="col-md-5 player-btn d-none" data-value="{{ game_data['player1l'] }}" data-order=""><img class="player-img" src="{{ url_for('static', filename='img/left_1.png')}}"></button>
-        <button id="player2-left-btn" class="col-md-5 player-btn" data-value="{{ game_data['player2l'] }}" data-order=""><img class="not-current-player player-img" src="{{ url_for('static', filename='img/left_1.png')}}"></button>
+        <button id="player-left-btn" class="col-md-5 player-btn d-none" data-value="{{ game_data['player1l'] }}" data-order=""><img class="player-img-top" src="{{ url_for('static', filename='img/left_1.png')}}"></button>
+        <button id="player2-left-btn" class="col-md-5 player-btn" data-value="{{ game_data['player2l'] }}" data-order=""><img class="player-img-top" src="{{ url_for('static', filename='img/left_1.png')}}"></button>
         <section class="col-md-1"></section>
-        <button id="player-right-btn" class="col-md-6 player-btn d-none" data-value="{{ game_data['player1r'] }}" data-order=""><img class="player-img" src="{{ url_for('static', filename='img/right_1.png')}}"></button>
-        <button id="player2-right-btn" class="col-md-6 player-btn" data-value="{{ game_data['player2r'] }}" data-order=""><img class="not-current-player player-img" src="{{ url_for('static', filename='img/right_1.png')}}"></button>
+        <button id="player-right-btn" class="col-md-6 player-btn d-none" data-value="{{ game_data['player1r'] }}" data-order=""><img class="player-img-top" src="{{ url_for('static', filename='img/right_1.png')}}"></button>
+        <button id="player2-right-btn" class="col-md-6 player-btn" data-value="{{ game_data['player2r'] }}" data-order=""><img class="player-img-top" src="{{ url_for('static', filename='img/right_1.png')}}"></button>
     </div>
 </div>
 <section style="height:200px;"></section>
@@ -22,11 +22,11 @@
 <div class="row">
     <div class="d-flex align-items-center justify-content-center">
         <button id="player-left-btn-bottom" class="col-md-5 player-btn" data-value="{{ game_data['player1l'] }}" data-order=""><img class="player-img" src="{{ url_for('static', filename='img/left_1.png')}}"></button>
-        <button id="player2-left-btn-bottom" class="col-md-5 player-btn d-none" data-value="{{ game_data['player2l'] }}" data-order=""><img class="not-current-player player-img" src="{{ url_for('static', filename='img/left_1.png')}}"></button>
+        <button id="player2-left-btn-bottom" class="col-md-5 player-btn d-none" data-value="{{ game_data['player2l'] }}" data-order=""><img class="player-img" src="{{ url_for('static', filename='img/left_1.png')}}"></button>
         <section class="col-md-1">
         </section>
         <button id="player-right-btn-bottom" class="col-md-6 player-btn" data-value="{{ game_data['player1r'] }}" data-order=""><img class="player-img" src="{{ url_for('static', filename='img/right_1.png')}}"></button>
-        <button id="player2-right-btn-bottom" class="col-md-6 player-btn d-none" data-value="{{ game_data['player2r'] }}" data-order=""><img class="not-current-player player-img" src="{{ url_for('static', filename='img/right_1.png')}}"></button>
+        <button id="player2-right-btn-bottom" class="col-md-6 player-btn d-none" data-value="{{ game_data['player2r'] }}" data-order=""><img class="player-img" src="{{ url_for('static', filename='img/right_1.png')}}"></button>
     </div>
 </div>
 <section style="height: 20px;"></section>
@@ -45,65 +45,138 @@ let currentPlayer = 'player1'
 //hand button click listeners
 let playerLeftBTN = document.getElementById("player-left-btn-bottom")
 playerLeftBTN.addEventListener("click", () => {
-    switchPlayerHands()
-    updateOrder(playerLeftBTN)
-    if (playerLeftBTN.classList.contains('selected')) {
-        playerLeftBTN.classList.remove('selected')
-    } else {
-        playerLeftBTN.classList.add('selected')
-        if (playerRightBTN.classList.contains('selected')) {
-            determineAmount(playerRightBTN, playerLeftBTN, 'right')
-        } else if (player2RightBTN.classList.contains('selected')) {
-            attackMove(playerLeftBTN, player2RightBTN, 'left', 'right')
-        } else if (player2LeftBTN.classList.contains('selected')) {
-            attackMove(playerLeftBTN, player2LeftBTN, 'left', 'left')
+    if (currentPlayer === 'player1') {
+        updateOrder(document.getElementById("player-left-btn-bottom"))
+        if (document.getElementById("player-left-btn-bottom").classList.contains('selected')) {
+            document.getElementById("player-left-btn-bottom").classList.remove('selected')
+        } else {
+            document.getElementById("player-left-btn-bottom").classList.add('selected')
+            if (document.getElementById("player-right-btn-bottom").classList.contains('selected')) {
+                determineAmount(document.getElementById("player-right-btn-bottom"), document.getElementById("player-left-btn-bottom"), 'right')
+            } else if (document.getElementById("player2-right-btn").classList.contains('selected')) {
+                attackMove(document.getElementById("player-left-btn-bottom"), document.getElementById("player2-right-btn"), 'left', 'right')
+            } else if (document.getElementById("player2-left-btn").classList.contains('selected')) {
+                attackMove(document.getElementById("player-left-btn-bottom"), document.getElementById("player2-left-btn"), 'left', 'left')
+            }
         }
     }
 })
 let playerRightBTN = document.getElementById("player-right-btn-bottom")
 playerRightBTN.addEventListener("click", () => {
-    updateOrder(playerRightBTN)
-    if (playerRightBTN.classList.contains('selected')) {
-        playerRightBTN.classList.remove('selected')
-    } else {
-        playerRightBTN.classList.add('selected')
-        if (playerLeftBTN.classList.contains('selected')) {
-            determineAmount(playerLeftBTN, playerRightBTN, 'left')
-        } else if (player2RightBTN.classList.contains('selected')) {
-            attackMove(playerRightBTN, player2RightBTN, 'right', 'right')
-        } else if (player2LeftBTN.classList.contains('selected')) {
-            attackMove(playerRightBTN, player2LeftBTN, 'right', 'left')
+    if (currentPlayer === 'player1') {
+        updateOrder(document.getElementById("player-right-btn-bottom"))
+        if (document.getElementById("player-right-btn-bottom").classList.contains('selected')) {
+            document.getElementById("player-right-btn-bottom").classList.remove('selected')
+        } else {
+            document.getElementById("player-right-btn-bottom").classList.add('selected')
+            if (document.getElementById("player-left-btn-bottom").classList.contains('selected')) {
+                determineAmount(document.getElementById("player-left-btn-bottom"), document.getElementById("player-right-btn-bottom"), 'left')
+            } else if (document.getElementById("player2-right-btn").classList.contains('selected')) {
+                attackMove(document.getElementById("player-right-btn-bottom"), document.getElementById("player2-right-btn"), 'right', 'right')
+            } else if (document.getElementById("player2-left-btn").classList.contains('selected')) {
+                attackMove(document.getElementById("player-right-btn-bottom"), document.getElementById("player2-left-btn"), 'right', 'left')
+            }
         }
     }
 })
 let player2LeftBTN = document.getElementById("player2-left-btn")
 player2LeftBTN.addEventListener("click", () => {
-    updateOrder(player2LeftBTN)
-    if (player2LeftBTN.classList.contains('selected')) {
-        player2LeftBTN.classList.remove('selected')
-    } else {
-        player2LeftBTN.classList.add('selected')
-        if (playerRightBTN.classList.contains('selected')) {
-            attackMove(playerRightBTN, player2LeftBTN, 'right', 'left')
-        } else if (playerLeftBTN.classList.contains('selected')) {
-            attackMove(playerLeftBTN, player2LeftBTN, 'left', 'left')
+    if (currentPlayer === 'player1') {
+        updateOrder(document.getElementById("player2-left-btn"))
+        if (document.getElementById("player2-left-btn").classList.contains('selected')) {
+            document.getElementById("player2-left-btn").classList.remove('selected')
+        } else {
+            document.getElementById("player2-left-btn").classList.add('selected')
+            if ( document.getElementById("player-right-btn-bottom").classList.contains('selected')) {
+                attackMove( document.getElementById("player-right-btn-bottom"), document.getElementById("player2-left-btn"), 'right', 'left')
+            } else if (document.getElementById("player-left-btn-bottom").classList.contains('selected')) {
+                attackMove(document.getElementById("player-left-btn-bottom"), document.getElementById("player2-left-btn"), 'left', 'left')
+            }
         }
     }
 })
 let player2RightBTN = document.getElementById("player2-right-btn")
 player2RightBTN.addEventListener("click", () => {
-    updateOrder(player2RightBTN)
-    if (player2RightBTN.classList.contains('selected')) {
-        player2RightBTN.classList.remove('selected')
-    } else {
-        player2RightBTN.classList.add('selected')
-        if (playerRightBTN.classList.contains('selected')) {
-            attackMove(playerRightBTN, player2RightBTN, 'right', 'right')
-        } else if (playerLeftBTN.classList.contains('selected')) {
-            attackMove(playerLeftBTN, player2RightBTN, 'left', 'right')
+    if (currentPlayer === 'player1') {
+        updateOrder(document.getElementById("player2-right-btn"))
+        if (document.getElementById("player2-right-btn").classList.contains('selected')) {
+            document.getElementById("player2-right-btn").classList.remove('selected')
+        } else {
+            document.getElementById("player2-right-btn").classList.add('selected')
+            if (document.getElementById("player-right-btn-bottom").classList.contains('selected')) {
+                attackMove(document.getElementById("player-right-btn-bottom"), document.getElementById("player2-right-btn"), 'right', 'right')
+            } else if (document.getElementById("player-left-btn-bottom").classList.contains('selected')) {
+                attackMove(document.getElementById("player-left-btn-bottom"), document.getElementById("player2-right-btn"), 'left', 'right')
+            }
         }
     }
 })
+
+document.getElementById("player-left-btn").addEventListener("click", () => {
+    if (currentPlayer == 'player2') {
+        updateOrder(document.getElementById("player-left-btn"))
+        if (document.getElementById("player-left-btn").classList.contains('selected')) {
+            document.getElementById("player-left-btn").classList.remove('selected')
+        } else {
+            document.getElementById("player-left-btn").classList.add('selected')
+            if (document.getElementById("player2-right-btn-bottom").classList.contains('selected')) {
+                attackMove(document.getElementById("player2-right-btn-bottom"), document.getElementById("player-left-btn"), 'right', 'left')
+            } else if (document.getElementById("player2-left-btn-bottom").classList.contains('selected')) {
+                attackMove(document.getElementById("player2-left-btn-bottom"), document.getElementById("player-left-btn"), 'left', 'left')
+            }
+        }
+    }
+})
+document.getElementById("player-right-btn").addEventListener("click", () => {
+    if (currentPlayer === 'player2') {
+        updateOrder(document.getElementById("player-right-btn"))
+        if (document.getElementById("player-right-btn").classList.contains('selected')) {
+            document.getElementById("player-right-btn").classList.remove('selected')
+        } else {
+            document.getElementById("player-right-btn").classList.add('selected')
+            if (document.getElementById("player2-right-btn-bottom").classList.contains('selected')) {
+                attackMove(document.getElementById("player2-right-btn-bottom"), document.getElementById("player-right-btn"), 'right', 'right')
+            } else if (document.getElementById("player2-left-btn-bottom").classList.contains('selected')) {
+                attackMove(document.getElementById("player2-left-btn-bottom"), document.getElementById("player-right-btn"), 'left', 'right')
+            }
+        }
+    }
+})
+document.getElementById("player2-left-btn-bottom").addEventListener("click", () => {
+    if (currentPlayer === 'player2') {
+        updateOrder(document.getElementById("player2-left-btn-bottom"))
+        if (document.getElementById("player2-left-btn-bottom").classList.contains('selected')) {
+            document.getElementById("player2-left-btn-bottom").classList.remove('selected')
+        } else {
+            document.getElementById("player2-left-btn-bottom").classList.add('selected')
+            if (document.getElementById("player2-right-btn-bottom").classList.contains('selected')) {
+                determineAmount(document.getElementById("player2-right-btn-bottom"), document.getElementById("player2-left-btn-bottom"), 'right')
+            } else if (document.getElementById("player-right-btn").classList.contains('selected')) {
+                attackMove(document.getElementById("player2-left-btn-bottom"), document.getElementById("player-right-btn"), 'left', 'right')
+            } else if (document.getElementById("player-left-btn").classList.contains('selected')) {
+                attackMove(document.getElementById("player2-left-btn-bottom"), document.getElementById("player-left-btn"), 'left', 'left')
+            }
+        }
+    }
+})
+document.getElementById("player2-right-btn-bottom").addEventListener("click", () => {
+    if (currentPlayer === 'player2') {
+        updateOrder(document.getElementById("player2-right-btn-bottom"))
+        if (document.getElementById("player2-right-btn-bottom").classList.contains('selected')) {
+            document.getElementById("player2-right-btn-bottom").classList.remove('selected')
+        } else {
+            document.getElementById("player2-right-btn-bottom").classList.add('selected')
+            if (document.getElementById("player2-left-btn-bottom").classList.contains('selected')) {
+                determineAmount(document.getElementById("player2-left-btn-bottom"), document.getElementById("player2-right-btn-bottom"), 'left')
+            } else if (document.getElementById("player-right-btn").classList.contains('selected')) {
+                attackMove(document.getElementById("player2-right-btn-bottom"), document.getElementById("player-right-btn"), 'right', 'right')
+            } else if (document.getElementById("player-left-btn").classList.contains('selected')) {
+                attackMove(document.getElementById("player2-right-btn-bottom"), document.getElementById("player-left-btn"), 'right', 'left')
+            }
+        }
+    }
+})
+
 
 //split amount button click listeners
 document.getElementById("button1").addEventListener("click", () => {
@@ -124,7 +197,7 @@ document.getElementById("button4").addEventListener("click", () => {
 
 
 function attackMove(playerHand, opponentHand, playerSide, opponentSide) {
-    fetch('/perform-move', {
+    fetch('/perform-move-player', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
@@ -132,34 +205,26 @@ function attackMove(playerHand, opponentHand, playerSide, opponentSide) {
             'playerHand': Number(playerHand.dataset.value),
             'opponentHand': Number(opponentHand.dataset.value),
             'playerSide': playerSide,
-            'opponentSide': opponentSide
+            'opponentSide': opponentSide,
+            'currentPlayer': currentPlayer
         })
     })
     .then(res => res.json())
     .then(async data => {
-        console.log("attack recieved")
         if (data['isSuccessful'] === true) {
-            opponentHand.dataset.value = String(data['hand2'])
+            opponentHand.dataset.value = String(data['opponentHand'])
+            playerHand.dataset.value = String(data['playerHand'])
+
+            await sleep(500)
+
             opponentHand.querySelector('img').src = data['opponentImgUrl']
             playerHand.classList.remove('selected')
             opponentHand.classList.remove('selected')
             playerHand.dataset.order = ''
             opponentHand.dataset.order = ''
+            
 
-            //values after the bots move done before the delay to prevent any bugs the user could cause if they spam before the 2s are up
-            playerLeftBTN.dataset.value = String(data['handsAfter'][0])
-            playerRightBTN.dataset.value = String(data['handsAfter'][1])
-            player2LeftBTN.dataset.value = String(data['handsAfter'][2])
-            player2RightBTN.dataset.value = String(data['handsAfter'][3])
-
-            console.log("right before")
-            await sleep(2000)
-            console.log("2s later")
-            console.log(data['botmove'])
-            playerLeftBTN.querySelector('img').src = data['handsAfterUrl'][0]
-            playerRightBTN.querySelector('img').src = data['handsAfterUrl'][1]
-            player2LeftBTN.querySelector('img').src = data['handsAfterUrl'][2]
-            player2RightBTN.querySelector('img').src = data['handsAfterUrl'][3]
+            switchPlayerHands()
         } else {
             console.log(data['errorMsg'])
         }
@@ -167,7 +232,7 @@ function attackMove(playerHand, opponentHand, playerSide, opponentSide) {
 }
 
 function splitMove(splitterHand, recipientHand, amount, splitterHandSide) {
-    fetch('/perform-move', {
+    fetch('/perform-move-player', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
@@ -175,7 +240,8 @@ function splitMove(splitterHand, recipientHand, amount, splitterHandSide) {
             'splitterHand': Number(splitterHand.dataset.value),
             'recipientHand': Number(recipientHand.dataset.value),
             'amount': Number(amount),
-            'splitterHandSide': splitterHandSide
+            'splitterHandSide': splitterHandSide,
+            'currentPlayer': currentPlayer
         })
     })
     .then(res => res.json())
@@ -189,24 +255,14 @@ function splitMove(splitterHand, recipientHand, amount, splitterHandSide) {
             splitterHand.dataset.order = ''
             recipientHand.dataset.order = ''
 
-            splitterHand.dataset.value = String(data['hand1'])
-            recipientHand.dataset.value = String(data['hand2'])
+            await sleep(500)
+
+            splitterHand.dataset.value = String(data['splitterHand'])
+            recipientHand.dataset.value = String(data['recipientHand'])
             splitterHand.querySelector('img').src = data['splitterHandUrl']
             recipientHand.querySelector('img').src = data['recipientHandUrl']
 
-            playerLeftBTN.dataset.value = String(data['handsAfter'][0])
-            playerRightBTN.dataset.value = String(data['handsAfter'][1])
-            player2LeftBTN.dataset.value = String(data['handsAfter'][2])
-            player2RightBTN.dataset.value = String(data['handsAfter'][3])
-
-            console.log("right before")
-            await sleep(2000)
-            console.log("2s later")
-            console.log(data['botmove'])
-            playerLeftBTN.querySelector('img').src = data['handsAfterUrl'][0]
-            playerRightBTN.querySelector('img').src = data['handsAfterUrl'][1]
-            player2LeftBTN.querySelector('img').src = data['handsAfterUrl'][2]
-            player2RightBTN.querySelector('img').src = data['handsAfterUrl'][3]
+            switchPlayerHands()
         } else {
             console.log(data['error-msg'])
         }
@@ -214,20 +270,15 @@ function splitMove(splitterHand, recipientHand, amount, splitterHandSide) {
 }
 
 function determineAmount(splitterHand, recipientHand, splitterHandSide) {
-    console.log({
-            'move': 'determineAmount',
-            'splitterHand': Number(splitterHand.dataset.value),
-            'recipientHand': Number(recipientHand.dataset.value),
-            'splitterHandSide': splitterHandSide
-        })
-    fetch('/perform-move', {
+    fetch('/perform-move-player', {
         method:'POST',
         headers:{'Content-Type': 'Application/json'},
         body: JSON.stringify({
             'move': 'determineAmount',
             'splitterHand': Number(splitterHand.dataset.value),
             'recipientHand': Number(recipientHand.dataset.value),
-            'splitterHandSide': splitterHandSide
+            'splitterHandSide': splitterHandSide,
+            'currentPlayer': currentPlayer
         })
     })
     .then(res => res.json())
@@ -239,12 +290,20 @@ function determineAmount(splitterHand, recipientHand, splitterHandSide) {
 }
 
 function amountClick(amount) {
-    console.log(playerLeftBTN.dataset.order, playerRightBTN.dataset.order)
-    if (playerLeftBTN.dataset.order === '1') {
-        splitMove(playerRightBTN, playerLeftBTN, amount, 'right')
-    } else if (playerRightBTN.dataset.order === '1') {
-        splitMove(playerLeftBTN, playerRightBTN, amount, 'left')
+    if (currentPlayer === 'player1') {
+        if (document.getElementById("player-left-btn-bottom").dataset.order === '1') {
+            splitMove(document.getElementById("player-right-btn-bottom"), document.getElementById("player-left-btn-bottom"), amount, 'right')
+        } else if (document.getElementById("player-right-btn-bottom").dataset.order === '1') {
+            splitMove(document.getElementById("player-left-btn-bottom"), document.getElementById("player-right-btn-bottom"), amount, 'left')
+        }
+    } else if (currentPlayer === 'player2') {
+        if (document.getElementById("player2-left-btn-bottom").dataset.order === '1') {
+            splitMove(document.getElementById("player2-right-btn-bottom"), document.getElementById("player2-left-btn-bottom"), amount, 'right')
+        } else if (document.getElementById("player2-right-btn-bottom").dataset.order === '1') {
+            splitMove(document.getElementById("player2-left-btn-bottom"), document.getElementById("player2-right-btn-bottom"), amount, 'left')
+        }
     }
+
 }
 
 function updateOrder(handBtn) {
@@ -262,7 +321,6 @@ function updateOrder(handBtn) {
             player2RightBTN.dataset.order = String(Number(player2RightBTN.dataset.order) + 1)
         }
         handBtn.dataset.order = '1'
-        console.log("set to first")
     } else {
         if (playerLeftBTN.dataset.order != '' && playerLeftBTN.dataset.order != '1' && Number(playerLeftBTN.dataset.order) > Number(handBtn.dataset.order)) {
             playerLeftBTN.dataset.order = String(Number(playerLeftBTN.dataset.order) - 1)
@@ -277,7 +335,6 @@ function updateOrder(handBtn) {
             player2RightBTN.dataset.order = String(Number(player2RightBTN.dataset.order) - 1)
         }
         handBtn.dataset.order = ''
-        console.log("set to null")
     }
     if (playerLeftBTN.dataset.order > 2) {
         playerLeftBTN.dataset.order = ''
@@ -295,7 +352,6 @@ function updateOrder(handBtn) {
         player2RightBTN.dataset.order = ''
         player2RightBTN.classList.remove('selected')
     }
-    console.log('after', playerLeftBTN.dataset.order, 'pl', playerRightBTN.dataset.order, 'pr', player2LeftBTN.dataset.order, 'ol', player2RightBTN.dataset.order, 'or')
 }
 
 function sleep(ms) {
@@ -303,7 +359,8 @@ function sleep(ms) {
 }
 
 function switchPlayerHands() {
-    if (currentPlayer = 'player2') { //sets back to original - player 1 on the bottom
+    
+    if (currentPlayer === 'player2') { //sets back to original - player 1 on the bottom
         currentPlayer = 'player1'
         let temp = document.getElementById('player2-name').textContent
         document.getElementById('player2-name').textContent = document.getElementById('player1-name').textContent
@@ -325,6 +382,16 @@ function switchPlayerHands() {
         player2LeftBTN.classList.remove('d-none')
         player2RightBTN.classList.remove('d-none')
 
+        playerLeftBTN.dataset.value = document.getElementById("player-left-btn").dataset.value
+        playerRightBTN.dataset.value = document.getElementById("player-right-btn").dataset.value
+        player2LeftBTN.dataset.value = document.getElementById("player2-left-btn-bottom").dataset.value
+        player2RightBTN.dataset.value = document.getElementById("player2-right-btn-bottom").dataset.value
+
+        playerLeftBTN.querySelector("img").src = document.getElementById("player-left-btn").querySelector("img").src
+        playerRightBTN.querySelector("img").src = document.getElementById("player-right-btn").querySelector("img").src
+        player2LeftBTN.querySelector("img").src = document.getElementById("player2-left-btn-bottom").querySelector("img").src
+        player2RightBTN.querySelector("img").src = document.getElementById("player2-right-btn-bottom").querySelector("img").src
+
     } else { //sets to player 2 on the bottom
         currentPlayer = 'player2'
         let temp = document.getElementById('player2-name').textContent
@@ -345,9 +412,17 @@ function switchPlayerHands() {
         playerRightBTN.classList.remove('d-none')
         player2LeftBTN.classList.remove('d-none')
         player2RightBTN.classList.remove('d-none')
+
+        playerLeftBTN.dataset.value = document.getElementById("player-left-btn-bottom").dataset.value
+        playerRightBTN.dataset.value = document.getElementById("player-right-btn-bottom").dataset.value
+        player2LeftBTN.dataset.value = document.getElementById("player2-left-btn").dataset.value
+        player2RightBTN.dataset.value = document.getElementById("player2-right-btn").dataset.value
+
+        playerLeftBTN.querySelector("img").src = document.getElementById("player-left-btn-bottom").querySelector("img").src
+        playerRightBTN.querySelector("img").src = document.getElementById("player-right-btn-bottom").querySelector("img").src
+        player2LeftBTN.querySelector("img").src = document.getElementById("player2-left-btn").querySelector("img").src
+        player2RightBTN.querySelector("img").src = document.getElementById("player2-right-btn").querySelector("img").src
     }
-
-
 }
 
 

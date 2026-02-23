@@ -118,6 +118,13 @@ def split_function(current_player):
         else:
             return 'back'
     
+def update_state(state, Player1, Player2):
+    if state[4] == 0:
+        state = (Player1.left.get_value(), Player1.right.get_value(), Player2.left.get_value(), Player2.right.get_value(), 1)
+    elif state[4] == 1:
+        state = (Player1.left.get_value(), Player1.right.get_value(), Player2.left.get_value(), Player2.right.get_value(), 0)
+    return state
+
 #-----------------------------------------------------------
 
 class Game:
@@ -161,13 +168,9 @@ class Game:
                         print("Returning back")
                         time.sleep(1)
             elif type(current_player).__name__ == 'Agent':
-                current_player.make_move(state, q_values, not_current_player)
+                current_player.make_move(state, q_values, not_current_player, Player1, Player2)
                 current_player, not_current_player = switch_players(current_player, not_current_player)
-            if state[4] == 0:
-                state = (Player1.left.get_value(), Player1.right.get_value(), Player2.left.get_value(), Player2.right.get_value(), 1)
-            elif state[4] == 1:
-                state = (Player1.left.get_value(), Player1.right.get_value(), Player2.left.get_value(), Player2.right.get_value(), 0)
-
+            state = update_state(state, Player1, Player2)
         if Player1.right.get_value() + Player1.left.get_value() == 0:
             self.scores[1] += 1
             #print(Player2.name, 'Wins!!!!')

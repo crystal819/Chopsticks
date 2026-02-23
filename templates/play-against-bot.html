@@ -134,7 +134,8 @@ function attackMove(playerHand, opponentHand, playerSide, opponentSide) {
         console.log("attack recieved")
         if (data['isSuccessful'] === true) {
             disableButtons()
-            opponentHand.dataset.value = String(data['hand2'])
+            opponentHand.dataset.value = String(data['opponentHand'])
+            playerHand.dataset.value = String(data['playerHand'])
             opponentHand.querySelector('img').src = data['opponentImgUrl']
             playerHand.classList.remove('selected')
             opponentHand.classList.remove('selected')
@@ -185,8 +186,8 @@ function splitMove(splitterHand, recipientHand, amount, splitterHandSide) {
             recipientHand.classList.remove('selected')
             splitterHand.dataset.order = ''
             recipientHand.dataset.order = ''
-            splitterHand.dataset.value = String(data['hand1'])
-            recipientHand.dataset.value = String(data['hand2'])
+            splitterHand.dataset.value = String(data['splitterHand'])
+            recipientHand.dataset.value = String(data['recipientHand'])
             splitterHand.querySelector('img').src = data['splitterHandUrl']
             recipientHand.querySelector('img').src = data['recipientHandUrl']
 
