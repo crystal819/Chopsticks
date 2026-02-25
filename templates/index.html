@@ -5,25 +5,43 @@
 <div class="row">
     <div class="d-flex align-items-center justify-content-center">
         <form method="POST">
-            <input id="inputName" name="username" placeholder="Enter username" type="text">
-
-            <button id="botBTN" type="submit" formaction="{{ url_for('play_against_bot') }}" onclick="">Play against bot</button>
-            <button id="playerBTN" type="submit" formaction="{{ url_for('play_against_player') }}">Play against player</button>
+            <div class="row">
+                <div class="col-md-6 column">
+                    <div class="d-flex align-items-center justify-content-center">
+                        <input id="inputName" name="username" placeholder="Enter username" type="text">
+                    </div>
+                    <div class="d-flex align-items-center justify-content-center">
+                        <input id="inputPassword" name="password" placeholder="Enter password" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6 column">
+                    <div class="d-flex align-items-center justify-content-center">
+                        <button id="botBTN">Play against bot</button>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-center">
+                        <button id="playerBTN">Play against player</button>
+                    </div>
+                </div>
+            </div>
         </form>
     </div>
 </div>
 
-
-
 <script>
-function playAgainstBot() {
-    fetch('/')
-}
-
-
-
+document.getElementById("botBTN").addEventListener("click", () => {
+    fetch('/play-against-bot', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            'username': document.getElementById("inputName").textContent,
+            'password': document.getElementById("password").textContent    
+        })
+    })
+    .then(res => res.json())
+    .then(async data => {
+    })
+})
 </script>
-
 
 
 {% endblock %}

@@ -49,6 +49,9 @@ playerLeftBTN.addEventListener("click", () => {
         updateOrder(document.getElementById("player-left-btn-bottom"))
         if (document.getElementById("player-left-btn-bottom").classList.contains('selected')) {
             document.getElementById("player-left-btn-bottom").classList.remove('selected')
+            for (let i = 0; i < 4; i++) {
+                document.getElementById(`button${String(i+1)}`).classList.add('d-none')
+            }
         } else {
             document.getElementById("player-left-btn-bottom").classList.add('selected')
             if (document.getElementById("player-right-btn-bottom").classList.contains('selected')) {
@@ -67,6 +70,9 @@ playerRightBTN.addEventListener("click", () => {
         updateOrder(document.getElementById("player-right-btn-bottom"))
         if (document.getElementById("player-right-btn-bottom").classList.contains('selected')) {
             document.getElementById("player-right-btn-bottom").classList.remove('selected')
+            for (let i = 0; i < 4; i++) {
+                document.getElementById(`button${String(i+1)}`).classList.add('d-none')
+            }
         } else {
             document.getElementById("player-right-btn-bottom").classList.add('selected')
             if (document.getElementById("player-left-btn-bottom").classList.contains('selected')) {
@@ -147,6 +153,9 @@ document.getElementById("player2-left-btn-bottom").addEventListener("click", () 
         updateOrder(document.getElementById("player2-left-btn-bottom"))
         if (document.getElementById("player2-left-btn-bottom").classList.contains('selected')) {
             document.getElementById("player2-left-btn-bottom").classList.remove('selected')
+            for (let i = 0; i < 4; i++) {
+                document.getElementById(`button${String(i+1)}`).classList.add('d-none')
+            }
         } else {
             document.getElementById("player2-left-btn-bottom").classList.add('selected')
             if (document.getElementById("player2-right-btn-bottom").classList.contains('selected')) {
@@ -164,6 +173,9 @@ document.getElementById("player2-right-btn-bottom").addEventListener("click", ()
         updateOrder(document.getElementById("player2-right-btn-bottom"))
         if (document.getElementById("player2-right-btn-bottom").classList.contains('selected')) {
             document.getElementById("player2-right-btn-bottom").classList.remove('selected')
+            for (let i = 0; i < 4; i++) {
+                document.getElementById(`button${String(i+1)}`).classList.add('d-none')
+            }
         } else {
             document.getElementById("player2-right-btn-bottom").classList.add('selected')
             if (document.getElementById("player2-left-btn-bottom").classList.contains('selected')) {

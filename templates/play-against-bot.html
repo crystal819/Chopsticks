@@ -43,6 +43,9 @@ playerLeftBTN.addEventListener("click", () => {
     updateOrder(playerLeftBTN)
     if (playerLeftBTN.classList.contains('selected')) {
         playerLeftBTN.classList.remove('selected')
+        for (let i = 0; i < 4; i++) {
+            document.getElementById(`button${String(i+1)}`).classList.add('d-none')
+        }
     } else {
         playerLeftBTN.classList.add('selected')
         if (playerRightBTN.classList.contains('selected')) {
@@ -59,6 +62,9 @@ playerRightBTN.addEventListener("click", () => {
     updateOrder(playerRightBTN)
     if (playerRightBTN.classList.contains('selected')) {
         playerRightBTN.classList.remove('selected')
+        for (let i = 0; i < 4; i++) {
+            document.getElementById(`button${String(i+1)}`).classList.add('d-none')
+        }
     } else {
         playerRightBTN.classList.add('selected')
         if (playerLeftBTN.classList.contains('selected')) {

@@ -10,7 +10,7 @@ class Agent(Player):
         super().__init__(name=name)
 
     def make_move(self, state, q_values, opponent, Player1, Player2):
-        epsilon = -1 #exploration rate the higher the more random, the lower the more skill
+        epsilon = 0.2 #exploration rate the higher the more random, the lower the more skill
         highest_action = self.max_Q(state, q_values)[1]
 
         
@@ -40,7 +40,7 @@ class Agent(Player):
             self.split(action[2], splitting_hand, recieving_hand)
         
         if self.left.get_value() + self.right.get_value() == 0:
-            reward = -10
+            reward = -1
         elif opponent.left.get_value() + opponent.right.get_value() == 0:
             reward = 1
         else:
@@ -137,7 +137,7 @@ class Agent(Player):
         future_state = update_state(state, Player1, Player2)
         #print(state, action, q_values[str(state)][str(action)])
         q_values[str(state)][str(action)] = round(q_values[str(state)][str(action)] + alpha*(reward - gamma*self.max_Q(future_state, q_values)[0] - q_values[str(state)][str(action)]), 8) #switched the + to a - and max_Q() to min_Q() since the agent would want to update the q_value based on the opponents worst move
-        #print(q_values[str(state)][str(action)])
+        #print(q_values[str(state)][str(action)])q_values[str(state)][str(action)] + alpha*(reward - gamma*self.max_Q(state, q_values)[0] - q_values[str(state)][str(action)])
 
 def load_q_values():
     with open('q_learning_values_for_bot.json', 'r') as file:
@@ -161,8 +161,15 @@ if __name__ == '__main__':
     Player2 = Agent('Bot2')
     q_values = load_q_values()
     game = Game(Player1, Player2, q_values)
-    for i in range(1000000):
+    n_games = 10000
+    for i in range(n_games):
+        if i % (n_games//20) == 0:
+            if i == n_games // 20:
+                print(f'{str(i)[:1]}% completed')
+            else:
+                print(f'{str(i)[:2]}% completed')
         game.play_CLI()
+    print(f'100% completed')
     save_q_values(q_values)
     end_time = time.perf_counter()
     print(end_time - start_time)
