@@ -1,9 +1,11 @@
-from flask import Flask, render_template, jsonify, request, session
+from flask import Flask, render_template, jsonify, request, session, redirect
 from agent import Agent, load_q_values
 from main import Player, Game
+from chopsticks_db import ChopsticksDB
 
 app = Flask(__name__)
 app.secret_key = 'HelloWorld!'
+db = ChopsticksDB()
 
 
 
@@ -14,25 +16,32 @@ def index():
 
 
 
-@app.route('/play-against-bot', methods=['GET', 'POST'])
+@app.route('/play-against-bot', methods=['POST'])
 def play_against_bot():
+    data = request.get_json()
 
     global Player1 
-    Player1 = Player(request.form['username'])
+    Player1 = Player(data['username'])
     global Player2
     Player2 = Agent('bot')
     global q_values
     q_values = load_q_values()
+    global db
+
+    with db._get_connection():
+        pass
     
+    
+
     #Player2.make_move((1,1,1,1,0), q_values, Player1, Player1, Player2)
-    return render_template('play-against-bot.html',
-                           name = request.form['username'],
+    return redirect(render_template('play-against-bot.html',
+                           name = data['username'],
                            game_data = {
                                'player1l': Player1.left.get_value(),
                                'player1r': Player1.right.get_value(),
                                'player2l': Player2.left.get_value(),
                                'player2r': Player2.right.get_value()
-                           })
+                           }))
 
 
 

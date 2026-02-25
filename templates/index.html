@@ -4,26 +4,24 @@
 <section style="height: 300px;"></section>
 <div class="row">
     <div class="d-flex align-items-center justify-content-center">
-        <form method="POST">
-            <div class="row">
-                <div class="col-md-6 column">
-                    <div class="d-flex align-items-center justify-content-center">
-                        <input id="inputName" name="username" placeholder="Enter username" type="text">
-                    </div>
-                    <div class="d-flex align-items-center justify-content-center">
-                        <input id="inputPassword" name="password" placeholder="Enter password" type="text">
-                    </div>
+        <div class="row">
+            <div class="col-md-6 column">
+                <div class="d-flex align-items-center justify-content-center">
+                    <input id="inputName" name="username" placeholder="Enter username" type="text">
                 </div>
-                <div class="col-md-6 column">
-                    <div class="d-flex align-items-center justify-content-center">
-                        <button id="botBTN">Play against bot</button>
-                    </div>
-                    <div class="d-flex align-items-center justify-content-center">
-                        <button id="playerBTN">Play against player</button>
-                    </div>
+                <div class="d-flex align-items-center justify-content-center">
+                    <input id="inputPassword" name="password" placeholder="Enter password" type="text">
                 </div>
             </div>
-        </form>
+            <div class="col-md-6 column">
+                <div class="d-flex align-items-center justify-content-center">
+                    <button id="botBTN">Play against bot</button>
+                </div>
+                <div class="d-flex align-items-center justify-content-center">
+                    <button id="playerBTN">Play against player</button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -33,12 +31,12 @@ document.getElementById("botBTN").addEventListener("click", () => {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
-            'username': document.getElementById("inputName").textContent,
-            'password': document.getElementById("password").textContent    
+            'username': document.getElementById("inputName").value,
+            'password': document.getElementById("inputPassword").value    
         })
     })
     .then(res => res.json())
-    .then(async data => {
+    .then(data => {
     })
 })
 </script>

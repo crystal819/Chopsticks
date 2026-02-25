@@ -23,7 +23,7 @@ class ChopsticksDB():
         except:
             self.conn_string = conn_string_home
         
-        return self.conn_string
+        
     
     def _get_connection(self):
         return pyodbc.connect(self.conn_string)

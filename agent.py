@@ -10,7 +10,7 @@ class Agent(Player):
         super().__init__(name=name)
 
     def make_move(self, state, q_values, opponent, Player1, Player2):
-        epsilon = 0.2 #exploration rate the higher the more random, the lower the more skill
+        epsilon = 0.1 #exploration rate the higher the more random, the lower the more skill
         highest_action = self.max_Q(state, q_values)[1]
 
         
@@ -161,7 +161,7 @@ if __name__ == '__main__':
     Player2 = Agent('Bot2')
     q_values = load_q_values()
     game = Game(Player1, Player2, q_values)
-    n_games = 10000
+    n_games = 1000000
     for i in range(n_games):
         if i % (n_games//20) == 0:
             if i == n_games // 20:
